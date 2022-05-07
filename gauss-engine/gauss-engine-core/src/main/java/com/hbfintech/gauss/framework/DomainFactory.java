@@ -1,10 +1,11 @@
 package com.hbfintech.gauss.framework;
 
 import java.util.List;
+import java.util.function.Function;
 
-public interface DomainFactory<T extends Module> {
+public interface DomainFactory<T, R> {
 
-    default List<T> manufacture() {return null;}
+    default List<R> manufacture(Function<? super T, ? extends R> mapper) {return null;}
 
-    default T fabricate() { return null;}
+    default R fabricate(Function<? super T, ? extends R> mapper) { return null;}
 }
