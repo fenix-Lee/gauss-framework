@@ -1,7 +1,7 @@
 package com.hbfintech.gauss.framework;
 
 @FunctionalInterface
-public interface Validation extends Module{
+public interface Validation {
 
     boolean validate(ModuleProposal proposal);
 }

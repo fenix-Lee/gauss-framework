@@ -9,7 +9,7 @@ import java.lang.annotation.*;
  * Multiple-chain are allowed by {@link Chains} annotation.
  *
  * Remember that the sequence field is also mandatory and DO NOT use same order between modules in same
- * chain class
+ * factory class
  *
  * @author Chang Su
  * @since 2020/7/16
@@ -30,7 +30,7 @@ public @interface Chain {
      *
      * @return chain class
      */
-    Class<?> chain();
+    Class<?> factory();
 
     /*
      * indicates modules under which position are used

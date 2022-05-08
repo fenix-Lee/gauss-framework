@@ -1,6 +1,6 @@
 package com.hbfintech.gauss.autoconfig;
 
-import com.hbfintech.gauss.util.BeanMapper;
+import com.hbfintech.gauss.basis.BeanMapper;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;

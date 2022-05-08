@@ -1,9 +1,5 @@
 package com.hbfintech.gauss;
 
-import com.hbfintech.gauss.util.BeanFactory;
-import com.hbfintech.gauss.util.BeanMapper;
-import org.springframework.context.annotation.Bean;
-
 public class GaussContextConfiguration {
 
 //    @Bean

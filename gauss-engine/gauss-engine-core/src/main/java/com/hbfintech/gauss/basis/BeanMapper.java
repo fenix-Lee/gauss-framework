@@ -1,4 +1,4 @@
-package com.hbfintech.gauss.util;
+package com.hbfintech.gauss.basis;
 
 import ma.glasnost.orika.MapperFactory;
 import ma.glasnost.orika.converter.builtin.CloneableConverter;
