@@ -176,6 +176,8 @@ public class FintechFactory extends GaussFactory<Operation, Procedure> {
         }
     }
 
+    @Component
+    @Chain(factory = FintechFactory.class, sequence = 2)
     public static class Repay implements Operation {
         @Override
         public void handle(ModuleProposal proposal) {
