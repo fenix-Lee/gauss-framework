@@ -39,20 +39,13 @@ BeanMapper是为了解决对象与对象之间属性的拷贝而写的“冗余�
 @Data
 @ToString
 @Component
-public class CarEntity implements Cloneable {
+public class CarEntity {
 
     private String name;
 
     private int year;
 
     private String ownerName;
-
-    @Override
-    protected Object clone() {
-        CarEntity copy = new CarEntity();
-        copy.setName("honda");
-        return copy;
-    }
 }
 ```
 假设我们这里有一个CarEntity，现在我们要把上面Car的属性复制到CarEntity里。
