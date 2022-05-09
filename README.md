@@ -81,7 +81,8 @@ BeanMapper.register(source.class, target.class, fieldMap[]);
 很多时候我们都知道要用xxx设计模式,但是用起来却不得要领。
 - 面向接口编程，策略模式中的精髓
 - 模块该怎么组合在一起?
-- 工厂该怎么生产实体对象？
+- 工厂该怎么生产实体对象？  
+
 这里用一个小例子来说明怎么使用Module和Factory
 假设我们有申请apply模块以及还款repay模块
 首先我们先写一个operation接口来继承Module
@@ -132,7 +133,6 @@ public class FintechFactory extends GaussFactory<Operation, Procedure> {
 @Creator
 public class FintechFactory extends GaussFactory<Operation, Procedure> {
 
-    public static final Function<Operation, Procedure> PROCEDURE_FUNCTION = o -> new Procedure(){{setOperation(o);}};
 
     @Component
     @Chain(factory = FintechFactory.class, sequence = 1)
