@@ -240,5 +240,5 @@ public class FintechFactory extends GaussFactory<Operation, RepayFlow> {
 最后，我们只要
 ```java
 FintechFactory fintechFactory = GaussFactoryGenerator.INSTANCE.getFactory(FintechFactory.class);
-RepayFlow repayFlow = defaultFactory.manufacture(FintechFactory.REPAYFLOW_FUNCTION);
+RepayFlow repayFlow = fintechFactory.manufacture(FintechFactory.REPAYFLOW_FUNCTION);
 ```
