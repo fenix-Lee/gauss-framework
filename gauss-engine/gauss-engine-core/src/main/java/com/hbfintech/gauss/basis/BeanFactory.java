@@ -31,7 +31,7 @@ public class BeanFactory implements ApplicationContextAware {
             throw new RuntimeException(e);
         }
         if (clazz.getSuperclass().getCanonicalName().equals(gaussFactoryClass.getCanonicalName())) {
-            throw new RuntimeException("factory class cannot be acquired in BeanFactory....");
+            return GaussFactoryGenerator.INSTANCE.getFactory(clazz);
         }
         return getObject(clazz);
     }

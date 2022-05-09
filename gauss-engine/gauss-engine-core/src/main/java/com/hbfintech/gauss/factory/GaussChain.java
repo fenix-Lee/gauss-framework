@@ -23,7 +23,7 @@ public abstract class GaussChain<T> implements InitializingBean {
      * original one
      *
      */
-    protected final List<T> getModules() {
+    public List<T> getModules() {
         return copyModules();
     }
 
@@ -37,7 +37,7 @@ public abstract class GaussChain<T> implements InitializingBean {
                 .collect(Collectors.toList());
     }
 
-    protected void setModules(List<T> modules) {
+    public void setModules(List<T> modules) {
         this.modules = modules;
     }
 

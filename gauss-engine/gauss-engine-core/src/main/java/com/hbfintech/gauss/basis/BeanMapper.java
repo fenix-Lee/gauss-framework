@@ -13,10 +13,12 @@ import java.util.Map;
 @Component
 public class BeanMapper {
 
-    private static final MapperFactory mapperFactory = new DefaultMapperFactory.Builder().build();
+    private static final MapperFactory MAPPER_FACTORY = new DefaultMapperFactory.Builder()
+            .useAutoMapping(true)
+            .build();
 
     public void init() {
-        mapperFactory.getConverterFactory()
+        MAPPER_FACTORY.getConverterFactory()
                 .registerConverter(new CloneableConverter(BeanFactory.getCloneableClass()));
     }
 
@@ -32,17 +34,17 @@ public class BeanMapper {
     }
 
     public static<S, D> void mapping(S source, D target) {
-        mapperFactory.getMapperFacade().map(source, target);
+        MAPPER_FACTORY.getMapperFacade().map(source, target);
     }
 
     public static <S, D> D mapping(S source, Class<D> destClazz) {
-        return mapperFactory.getMapperFacade()
+        return MAPPER_FACTORY.getMapperFacade()
                 .map(source, destClazz);
     }
 
     private static<S,D> void register(Class<S> source, Class<D> target,
                                       Map<String, String[]> fieldMaps) {
-        ClassMapBuilder<S, D> classMapBuilder = mapperFactory.classMap(source, target);
+        ClassMapBuilder<S, D> classMapBuilder = MAPPER_FACTORY.classMap(source, target);
         for (Map.Entry<String, String[]> entry : fieldMaps.entrySet()) {
             String[] names = entry.getValue();
             for (String name : names) {
@@ -54,7 +56,7 @@ public class BeanMapper {
     }
 
     private static<S, D> void registerByDefault(Class<S> source, Class<D> target) {
-        mapperFactory.classMap(source, target)
+        MAPPER_FACTORY.classMap(source, target)
                 .byDefault()
                 .register();
     }

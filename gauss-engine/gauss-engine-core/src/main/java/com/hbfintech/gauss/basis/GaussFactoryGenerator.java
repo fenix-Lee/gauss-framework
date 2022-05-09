@@ -33,7 +33,6 @@ public enum GaussFactoryGenerator {
         if (creatorAnnotation.isSingleton()) {
             return BeanFactory.getObject(clazz);
         }
-        BeanMapper.mapperRegister(BeanFactory.getObject(clazz).getClass(), clazz, null);
         return BeanMapper.mapping(BeanFactory.getObject(clazz), clazz);
     }
 }

@@ -1,5 +1,5 @@
 package com.hbfintech.gauss.factory;
-;
+
 import com.hbfintech.gauss.framework.DomainFactory;
 
 import java.util.List;
