@@ -1,15 +1,8 @@
 package com.hbfintech.gauss;
 
+import org.springframework.boot.SpringBootConfiguration;
+
+@SpringBootConfiguration
 public class GaussContextConfiguration {
 
-//    @Bean
-//    public BeanFactory getBeanFactory() {
-//        return new BeanFactory();
-//    }
-//
-//    /**
-//     * must cast init method before any other beans
-//     *
-//     * @return BeanMapper bean
-//     */
 }

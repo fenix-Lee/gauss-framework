@@ -1,8 +1,8 @@
 # Gauss Engine
-高斯引擎是为了优雅代码打造一款的轻量型框架. 
+高斯引擎是为了优雅代码打造一款的轻量型框架.
 
 ## How to use it
-下面介绍一下如何使用. 
+下面介绍一下如何使用.
 
 代码还没有入仓库，需要本地下载并install进本地仓库，然后在引入dependency
 ```xml
@@ -66,15 +66,17 @@ public class Car {
     private String owner;
 }
 ```
-我们先在class上面申明```@Mapper```告诉高斯引擎这个类有字段需要匹配，同时，在字段owner上面申明```@FieldMapping```为了告诉BeanMapper这个字段需要跟哪个类里的哪个字段匹配这样我们就可以
+我们先在class上面申明```@Mapper```告诉高斯引擎这个类有字段需要匹配，同时，在字段owner上面申明```@FieldMapping```为了告诉BeanMapper这个字段需要跟哪个类里的哪个字段匹配这样就可以了
 ```java
 CarEntity carEntity = BeanMapper.mapping(myCar, CarEntity.class);
+System.out.println(carEntity.getOwnerName) // 将是car里owner的值
 ```
 ***注意***
 - 这里的```@Mapper```不要跟mybatis里的mapper搞混了
-- 如果想要用BeanMapper进行对象字段复制需要有get set方法(如果没有，字段将不可复制)
+- 如果想要用BeanMapper进行对象字段复制需要有get和set方法(如果没有，字段将不可复制)
 - 这里默认是双向的，只要申明一次就可以相互复制(用上面的例子，CarEntity向Car复制也是可以的)
-- 如果目前项目中有些实体类无法添加注解，可以手动向BeanMapper里注册(fieldMap是需要匹配的字段，如果字段全相同可以填null）
+- 如果两个对象的字段都一模一样，则无需任何操作就可以直接使用BeanMapper来转
+- 如果目前项目中有些实体类无法添加注解，可以手动向BeanMapper里注册(fieldMap是需要匹配的字段）
 ```java
 BeanMapper.register(source.class, target.class, fieldMap[]);
 ```
@@ -82,7 +84,7 @@ BeanMapper.register(source.class, target.class, fieldMap[]);
 很多时候我们都知道要用xxx设计模式,但是用起来却不得要领。
 - 面向接口编程，策略模式中的精髓
 - 模块该怎么组合在一起?
-- 工厂该怎么生产实体对象？  
+- 工厂该怎么生产实体对象？
 
 这里用一个小例子来说明怎么使用Module和Factory
 假设我们有申请apply模块以及还款repay模块
@@ -100,7 +102,7 @@ public class FintechFactory extends GaussFactory<Operation, Procedure> {
 }
 ```
 - 这里我们需要```@Creator```注解，不然高斯引擎不知道这个是工厂自然就不能实例化出来
-- 在GaussFactory里的泛型，左边是你需要的模块类型，右边是你要生成的对象类型  
+- 在GaussFactory里的泛型，左边是你需要的模块类型，右边是你要生成的对象类型
 
 工厂准备好了，下面我们要告诉工厂我们的模块有哪些具体的实现
 ```java
@@ -127,7 +129,7 @@ public class FintechFactory extends GaussFactory<Operation, Procedure> {
     }
 }
 ```
-- 这里我们有两个实现类(不一定非要使用内部类，这里主要是为了篇幅原因就用内部类实现)  
+- 这里我们有两个实现类(不一定非要使用内部类，这里主要是为了篇幅原因使用内部类)
 
 有了实现类，我们需要告诉高斯引擎，这两个实现类是由```FintechFactory```来组合,这时我们要
 ```java
@@ -157,7 +159,7 @@ public class FintechFactory extends GaussFactory<Operation, Procedure> {
     }
 }
 ```
-```@Chain```注解是为了告诉高斯引擎这里的模块是由哪个工厂来组合，sequence是表明此模块的位置. 
+```@Chain```注解是为了告诉高斯引擎这里的模块是由哪个工厂来组合，sequence是表明此模块的位置.
 
 最后我们要一个生成实体对象的"函数"
 ```java
