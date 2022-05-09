@@ -3,17 +3,17 @@ package com.hbfintech.gauss.factory;
 import com.hbfintech.gauss.basis.BeanFactory;
 import com.hbfintech.gauss.framework.Chain;
 import com.hbfintech.gauss.framework.Chains;
+import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.context.ApplicationContext;
+import org.springframework.context.ApplicationContextAware;
 import org.springframework.core.annotation.AnnotationUtils;
 
-import javax.annotation.Resource;
 import java.util.*;
 import java.util.stream.Collectors;
 
-public abstract class GaussChain<T> implements InitializingBean {
+public abstract class GaussChain<T> implements InitializingBean, ApplicationContextAware {
 
-    @Resource
     protected ApplicationContext context;
 
     protected List<T> modules;
@@ -86,5 +86,10 @@ public abstract class GaussChain<T> implements InitializingBean {
             }
         });
         modules = sortModule(container);
+    }
+
+    @Override
+    public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
+        this.context = applicationContext;
     }
 }

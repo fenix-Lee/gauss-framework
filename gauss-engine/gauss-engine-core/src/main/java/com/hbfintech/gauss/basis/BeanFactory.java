@@ -81,10 +81,6 @@ public class BeanFactory implements ApplicationContextAware {
         return cloneableClazz.toArray(new Class<?>[0]);
     }
 
-    public static Map<String, Object> getBeansWithAnnotation(Class<? extends Annotation> annotationType) {
-        return context.getBeansWithAnnotation(annotationType);
-    }
-
     @Override
     public void setApplicationContext(@NonNull ApplicationContext applicationContext)
             throws BeansException {
