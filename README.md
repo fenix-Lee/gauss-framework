@@ -1,5 +1,5 @@
 # Gauss Engine
-高斯引擎是为了优雅代码打造一款的轻量型框架.
+高斯引擎是为了优雅代码打造的一款轻量型框架.
 
 ## How to use it
 下面介绍一下如何使用.
@@ -72,7 +72,7 @@ CarEntity carEntity = BeanMapper.mapping(myCar, CarEntity.class);
 System.out.println(carEntity.getOwnerName) // 将是car里owner的值
 ```
 ***注意***
-- 这里的```@Mapper```不要跟mybatis里的mapper搞混了
+- 这里的```@Mapper```不要跟mybatis里的mapper搞混了(如果该类使用了@FieldMapping注解则@Mapper里的target属性需要填写，否则校验将无法通过)
 - 如果想要用BeanMapper进行对象字段复制需要有get和set方法(如果没有，字段将不可复制)
 - 这里默认是双向的，只要申明一次就可以相互复制(用上面的例子，CarEntity向Car复制也是可以的)
 - 如果两个对象的字段都一模一样，则无需任何操作就可以直接使用BeanMapper来转
@@ -80,11 +80,11 @@ System.out.println(carEntity.getOwnerName) // 将是car里owner的值
 ```java
 BeanMapper.register(source.class, target.class, fieldMap[]);
 ```
-### Module和Factory
+### Module and Factory
 很多时候我们都知道要用xxx设计模式,但是用起来却不得要领。
 - 面向接口编程，策略模式中的精髓
-- 模块该怎么组合在一起?
-- 工厂该怎么生产实体对象？
+- 模块该怎么组合在一起更便捷?
+- 工厂该怎么生产实体对象更优雅？
 
 这里用一个小例子来说明怎么使用Module和Factory
 假设我们有申请apply模块以及还款repay模块
