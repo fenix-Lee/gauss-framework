@@ -158,7 +158,7 @@ public class FintechFactory extends GaussFactory<Operation, Procedure> {
 ```
 ```@Chain```注解是为了告诉高斯引擎这里的模块是由哪个工厂来组合，sequence是表明此模块的位置. 
 
-最后我们要告诉有一个生成实体对象的"函数"
+最后我们要一个生成实体对象的"函数"
 ```java
 @Creator
 public class FintechFactory extends GaussFactory<Operation, Procedure> {
@@ -191,4 +191,54 @@ public class FintechFactory extends GaussFactory<Operation, Procedure> {
 ```java
 FintechFactory factory = GaussFactoryGenerator.INSTANCE.getFactory(FintechFactory.class);
 List<Procedure> procedures = factory.wrap(FintechFactory.PROCEDURE_FUNCTION);
+```
+我们在来看工厂还能怎么生成对象
+```java
+@Data
+@ToString
+@Component
+public class RepayFlow {
+
+    private List<Operation> modules;
+    
+    // other methods
+}
+```
+这里我们有一个```RepayFlow```类需要组装我们刚刚的模块，那我们的工厂就需要改进一下
+```java
+@Creator
+public class FintechFactory extends GaussFactory<Operation, RepayFlow> {
+
+    public static final Function<List<Operation>, RepayFlow> REPAYFLOW_FUNCTION = t -> {
+      RepayFlow repayFlow = new RepayFlow();
+      repayFlow.setModules(t);
+      return repayFlow;
+    };
+
+    @Component
+    @Chain(factory = FintechFactory.class, sequence = 1)
+    public static class Apply implements Operation {
+
+        @Override
+        public void handle(ModuleProposal proposal) {
+            // implement code here
+            System.out.println("--- apply ---");
+        }
+    }
+
+    @Component
+    @Chain(factory = FintechFactory.class, sequence = 2)
+    public static class Repay implements Operation {
+        @Override
+        public void handle(ModuleProposal proposal) {
+            // implement code here
+            System.out.println("--- repay ----");
+        }
+    }
+}
+```
+最后，我们只要
+```java
+FintechFactory fintechFactory = GaussFactoryGenerator.INSTANCE.getFactory(FintechFactory.class);
+RepayFlow repayFlow = defaultFactory.manufacture(FintechFactory.REPAYFLOW_FUNCTION);
 ```
