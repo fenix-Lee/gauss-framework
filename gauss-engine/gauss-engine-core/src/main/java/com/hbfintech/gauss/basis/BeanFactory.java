@@ -14,6 +14,14 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
 
+/**
+ *
+ *
+ * @author Chang Su
+ * @version 1.0
+ * @since 4/3/2022
+ * @see ApplicationContext
+ */
 @Component
 public class BeanFactory implements ApplicationContextAware {
 

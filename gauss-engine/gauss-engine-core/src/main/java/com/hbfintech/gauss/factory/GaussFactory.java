@@ -6,6 +6,14 @@ import java.util.List;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
+/**
+ *
+ * @author Chang Su
+ * @version 1.0
+ * @since 4/5/2022
+ * @param <T> chain type
+ * @param <R> result type
+ */
 public abstract class GaussFactory<T, R> extends GaussChain<T>
         implements DomainFactory<T, R> {
 

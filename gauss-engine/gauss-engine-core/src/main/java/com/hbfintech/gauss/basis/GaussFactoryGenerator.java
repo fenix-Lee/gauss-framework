@@ -4,6 +4,13 @@ import com.hbfintech.gauss.factory.Creator;
 import com.hbfintech.gauss.factory.GaussFactory;
 import org.springframework.util.Assert;
 
+/**
+ *
+ *
+ * @author Chang Su
+ * @version 1.0
+ * @since 7/5/2022
+ */
 public enum GaussFactoryGenerator {
 
     INSTANCE;

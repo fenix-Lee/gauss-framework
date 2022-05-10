@@ -17,6 +17,13 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ *
+ *
+ * @author Chang Su
+ * @version 1.0
+ * @since 4/3/2022
+ */
 @Component
 public class BeanMapperProcessor implements BeanPostProcessor {
 
