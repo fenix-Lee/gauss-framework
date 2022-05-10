@@ -74,7 +74,7 @@
                 <configuration>
                     <source>${java.source.version}</source>
                     <target>${java.compile.version}</target>
-                    <encoding>UTF-8</encoding>
+                    <encoding>${project.build.sourceEncoding}</encoding>
                 </configuration>
             </plugin>
         </plugins>

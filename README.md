@@ -33,7 +33,8 @@ Car myCar = BeanFactory.acquireBean(Car.class);
 ```java
 Car secondCar = BeanFactory.getObjectCopy(Car.class);
 ```
-这里获取的secondCar将不在是Spring管理的单例，而是clone后的car
+这里获取的secondCar将不在是Spring管理的单例，而是clone后的car  
+- 注意```acquireBean```方法的使用。如果是非工厂实体类就底层调用的是Spring容器中的实例(默认单例),请小心使用。
 ### BeanMapper
 BeanMapper是为了解决对象与对象之间属性的拷贝而写的“冗余”代码。
 ```java
