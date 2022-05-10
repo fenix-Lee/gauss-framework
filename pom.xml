@@ -3,15 +3,16 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <packaging>pom</packaging>
-    <modules>
-        <module>gauss-engine</module>
-    </modules>
 
     <groupId>com.hbfintech.gauss</groupId>
     <artifactId>gauss-parent</artifactId>
     <version>1.1.2</version>
     <name>gauss-parent</name>
-    <description>unit test engine</description>
+    <description>java code engine</description>
+
+    <modules>
+        <module>gauss-engine</module>
+    </modules>
 
     <properties>
         <java.source.version>1.8</java.source.version>
