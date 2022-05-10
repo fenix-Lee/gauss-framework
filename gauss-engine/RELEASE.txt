@@ -1,0 +1,4 @@
+1. step definition
+2. bean mapper enhancement
+3. create bean with static method
+4. repository

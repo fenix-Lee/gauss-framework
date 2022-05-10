@@ -44,6 +44,10 @@ public class BeanFactory implements ApplicationContextAware {
         return getObject(clazz);
     }
 
+    public static Object acquireBean(String name) {
+        return context.getBean(name);
+    }
+
     static <T> T getObject(Class<T> clazz) {
         return context.getBean(clazz);
     }
