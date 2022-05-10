@@ -91,7 +91,11 @@ BeanMapper.register(source.class, target.class, fieldMap[]);
 假设我们有申请apply模块以及还款repay模块
 首先我们先写一个operation接口来继承Module
 ```java
-public interface Operation extends Module {
+public interface Operation extends Module<Operation.FlowChart> {
+
+    public static class FlowChart extends ModuleProposal {
+
+    }
 }
 ```
 然后我们需要一个工厂并且继承```GaussFactory```
@@ -114,7 +118,7 @@ public class FintechFactory extends GaussFactory<Operation, Procedure> {
     public static class Apply implements Operation {
 
         @Override
-        public void handle(ModuleProposal proposal) {
+        public void handle(Operation.FlowChart proposal) {
             // implement code here
             System.out.println("--- apply ---");
         }
@@ -123,7 +127,7 @@ public class FintechFactory extends GaussFactory<Operation, Procedure> {
     @Component
     public static class Repay implements Operation {
         @Override
-        public void handle(ModuleProposal proposal) {
+        public void handle(Operation.FlowChart proposal) {
             // implement code here
             System.out.println("--- repay ----");
         }
@@ -143,7 +147,7 @@ public class FintechFactory extends GaussFactory<Operation, Procedure> {
     public static class Apply implements Operation {
 
         @Override
-        public void handle(ModuleProposal proposal) {
+        public void handle(Operation.FlowChart proposal) {
             // implement code here
             System.out.println("--- apply ---");
         }
@@ -153,7 +157,7 @@ public class FintechFactory extends GaussFactory<Operation, Procedure> {
     @Chain(factory = FintechFactory.class, sequence = 2)
     public static class Repay implements Operation {
         @Override
-        public void handle(ModuleProposal proposal) {
+        public void handle(Operation.FlowChart proposal) {
             // implement code here
             System.out.println("--- repay ----");
         }
@@ -174,7 +178,7 @@ public class FintechFactory extends GaussFactory<Operation, Procedure> {
     public static class Apply implements Operation {
 
         @Override
-        public void handle(ModuleProposal proposal) {
+        public void handle(Operation.FlowChart proposal) {
             // implement code here
             System.out.println("--- apply ---");
         }
@@ -184,7 +188,7 @@ public class FintechFactory extends GaussFactory<Operation, Procedure> {
     @Chain(factory = FintechFactory.class, sequence = 2)
     public static class Repay implements Operation {
         @Override
-        public void handle(ModuleProposal proposal) {
+        public void handle(Operation.FlowChart proposal) {
             // implement code here
             System.out.println("--- repay ----");
         }
@@ -224,7 +228,7 @@ public class FintechFactory extends GaussFactory<Operation, RepayFlow> {
     public static class Apply implements Operation {
 
         @Override
-        public void handle(ModuleProposal proposal) {
+        public void handle(Operation.FlowChart proposal) {
             // implement code here
             System.out.println("--- apply ---");
         }
@@ -234,7 +238,7 @@ public class FintechFactory extends GaussFactory<Operation, RepayFlow> {
     @Chain(factory = FintechFactory.class, sequence = 2)
     public static class Repay implements Operation {
         @Override
-        public void handle(ModuleProposal proposal) {
+        public void handle(Operation.FlowChart proposal) {
             // implement code here
             System.out.println("--- repay ----");
         }
