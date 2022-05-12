@@ -35,15 +35,7 @@ public class BeanFactory implements ApplicationContextAware {
 
     @SuppressWarnings("unchecked")
     public static <T> T acquireBean(Class<T> clazz) {
-        Class<GaussFactory<?,?>> gaussFactoryClass;
-        try {
-            gaussFactoryClass = (Class<GaussFactory<?, ?>>) Class
-                    .forName("com.hbfintech.gauss.factory.GaussFactory");
-        } catch (ClassNotFoundException e) {
-            throw new RuntimeException(e);
-        }
-
-        if (clazz.getSuperclass().getCanonicalName().equals(gaussFactoryClass.getCanonicalName())) {
+        if (checkIfFactory(clazz)) {
             return GaussFactoryGenerator.INSTANCE.getFactory(clazz);
         }
         return getObject(clazz);
@@ -58,6 +50,9 @@ public class BeanFactory implements ApplicationContextAware {
     }
 
     public static <T> T getObjectCopy(Class<T> clazz) {
+        if (checkIfFactory(clazz)) {
+            return GaussFactoryGenerator.INSTANCE.getFactory(clazz);
+        }
         return copyObject(acquireBean(clazz));
     }
 
@@ -85,7 +80,23 @@ public class BeanFactory implements ApplicationContextAware {
         return copy;
     }
 
-    public static<T> T originalInstantiation(Class<T> clazz) {
+    @SuppressWarnings("unchecked")
+    private static boolean checkIfFactory(Class<?> sourceClass) {
+        Class<GaussFactory<?,?>> gaussFactoryClass;
+        try {
+            gaussFactoryClass = (Class<GaussFactory<?, ?>>) Class
+                    .forName("com.hbfintech.gauss.factory.GaussFactory");
+        } catch (ClassNotFoundException e) {
+            throw new RuntimeException(e);
+        }
+
+        if (sourceClass.getSuperclass().getCanonicalName().equals(gaussFactoryClass.getCanonicalName())) {
+            return true;
+        }
+        return false;
+    }
+
+    private static<T> T originalInstantiation(Class<T> clazz) {
         return BeanUtils.instantiateClass(clazz);
     }
 
