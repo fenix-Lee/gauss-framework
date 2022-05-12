@@ -34,7 +34,7 @@ public class Car {
 
     @Mappings(value = {
             @FieldMapping(scope = CarEntity.class, fieldNames = "ownerName"),
-            @FieldMapping(scope = Car.class, fieldNames = "driver")
+            @FieldMapping(scope = CarDTO.class, fieldNames = "driver")
     })
     private String owner;
 }
@@ -70,7 +70,7 @@ public class Car {
 
     @Mappings(value = {
             @FieldMapping(scope = CarEntity.class, fieldNames = "ownerName"),
-            @FieldMapping(scope = Car.class, fieldNames = {"driver", "ownerName"})
+            @FieldMapping(scope = CarDTO.class, fieldNames = {"driver", "ownerName"})
     })
     private String owner;
 }
