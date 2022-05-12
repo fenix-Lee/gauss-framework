@@ -3,6 +3,56 @@
 ## Advanced Usage
 这一篇是介绍高斯引擎的高阶用法
 前面一篇没有看到的可以参考[Gauss Engine Reference](https://github.com/fenix-Lee/gauss-framework)  
+### BeanFactory
+在上一篇中，简单介绍了clone这个方法。下面问题来了，如果我想进行定制化clone，那要怎么办呢？正常情况情况下,我们要先implement Cloneable接口 然后覆盖clone方法，最后在调用，才能达到深拷贝的目的。这里我们也需要告诉告诉高斯引擎我们这个类要拷贝的话需要定制化。
+```java
+@Data
+@ToString
+@Component
+public class CarEntity implements Cloneable{
+
+    private String name;
+
+    private int year;
+
+    private String ownerName;
+
+    @Override
+    protected Object clone() {
+        System.out.println("---- start -----");
+        CarEntity copy = new CarEntity();
+        copy.setName("copy");
+        return copy;
+    }
+}
+```
+到这里我们还不够，因为目前高斯引擎不会全包搜索实现cloneable接口的类，所以我们还需要一个注解来告诉高斯引擎，这个类是定制化的类
+```java
+@Data
+@ToString
+@OverrideClone
+public class CarEntity implements Cloneable{
+
+    private String name;
+
+    private int year;
+
+    private String ownerName;
+
+    @Override
+    protected Object clone() {
+        System.out.println("---- start -----");
+        CarEntity copy = new CarEntity();
+        copy.setName("copy");
+        return copy;
+    }
+}
+```
+这样，我们加上了```@OverrideClone```注解后，高斯引擎就知道这个类在拷贝时需要定制化。
+```java
+CarEntity copy = BeanFactory.getObjectCopy(CarEntity.class);
+System.out.println(copy.getName());  // "copy"
+```
 ### BeanMapper
 在上一篇中我们知道BeanMapper可以在对象间属性拷贝,也用了Car和CarEntity举了一个例子。那么如果我们的工程中有多个bean需要mapping该怎么优雅的申明？  
 我们可以集中在一个类上标明注解   
