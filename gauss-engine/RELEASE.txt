@@ -1,5 +1,0 @@
-
-1. repository
-2. chain copy
-3. gauss chain bug
-4. add validation for Mappers and FieldMapping

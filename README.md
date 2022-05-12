@@ -244,3 +244,5 @@ public class FintechFactory extends GaussFactory<Operation, RepayFlow> {
 FintechFactory fintechFactory = GaussFactoryGenerator.INSTANCE.getFactory(FintechFactory.class);
 RepayFlow repayFlow = fintechFactory.manufacture(FintechFactory.REPAYFLOW_FUNCTION);
 ```
+## Advanced Usage
+Please refer to [Gauss Engine Advancement](https://github.com/fenix-Lee/gauss-framework/tree/main/gauss-engine)

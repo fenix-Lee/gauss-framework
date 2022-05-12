@@ -7,8 +7,12 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Component;
+import org.springframework.util.ClassUtils;
+import org.springframework.util.ObjectUtils;
+import org.springframework.util.ReflectionUtils;
 
 import java.lang.annotation.Annotation;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -65,6 +69,17 @@ public class BeanFactory implements ApplicationContextAware {
 
     @SuppressWarnings("unchecked")
     public static<T> T originalCopy(T source) {
+        if (source instanceof Cloneable) {
+            // use clone method
+            try {
+                Method cloneMethod = Object.class.getDeclaredMethod("clone");
+                cloneMethod.setAccessible(true);
+                return (T)ReflectionUtils
+                        .invokeMethod(cloneMethod, source);
+            } catch (NoSuchMethodException e) {
+                throw new RuntimeException(e);
+            }
+        }
         T copy = (T) originalInstantiation(source.getClass());
         BeanUtils.copyProperties(source, copy);
         return copy;
