@@ -1,8 +1,8 @@
 package com.hbfintech.gauss.step;
 
 import com.hbfintech.gauss.basis.BeanFactory;
-import com.hbfintech.gauss.infrastructure.BasePO;
-import com.hbfintech.gauss.infrastructure.BaseRepository;
+import com.hbfintech.gauss.infrastructure.Binomial;
+import com.hbfintech.gauss.infrastructure.GaussDistribution;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
@@ -21,21 +21,20 @@ import java.util.Optional;
 import static org.junit.Assert.assertEquals;
 
 @CucumberContextConfiguration
-//@SpringBootTest
 public class BaseDefinition {
 
-    private BasePO po;
+    private Binomial po;
 
     @Given("insert following {string} in database by using {string}")
     @SuppressWarnings("unchecked")
     public void insertData(String beanName, String name, List<List<String>> table)
             throws Exception {
         Class<?> clazz = BeanFactory.acquireBean(beanName).getClass();
-        BaseRepository<?, BasePO> repository = (BaseRepository<?, BasePO>) BeanFactory.acquireBean(name);
+        GaussDistribution<?, Binomial> repository = (GaussDistribution<?, Binomial>) BeanFactory.acquireBean(name);
         List<String> columNames = table.get(0);
         for (int i = 1; i < table.size(); i++) {
             List<String> data = table.get(i);
-            BasePO base = (BasePO) getInstance(clazz);
+            Binomial base = (Binomial) getInstance(clazz);
             for (int j = 0; j < columNames.size(); j++) {
                 assert base != null;
                 ReflectionTestUtils.invokeSetterMethod(base, columNames.get(j),
@@ -49,10 +48,10 @@ public class BaseDefinition {
     @When("I search this flow, which id is {long} with {string}")
     @SuppressWarnings("unchecked")
     public void searchFlow(long id, String name) {
-        BaseRepository<?, BasePO> repository = (BaseRepository<?, BasePO>) BeanFactory.acquireBean(name);
+        GaussDistribution<?, Binomial> repository = (GaussDistribution<?, Binomial>) BeanFactory.acquireBean(name);
         Optional<?> po = ReflectionTestUtils.invokeMethod(repository, "queryEntity", id);
         Assert.assertTrue(null != po && po.isPresent());
-        this.po = (BasePO) po.get();
+        this.po = (Binomial) po.get();
     }
 
     @Then("I am being told the field {string} is {string}")
@@ -68,8 +67,7 @@ public class BaseDefinition {
         }
     }
 
-    private Object getValue(Class<?> clazz, String fieldName, String value)
-            throws Exception {
+    private Object getValue(Class<?> clazz, String fieldName, String value) throws Exception {
         Class<?> typeClazz;
         Field field = ReflectionUtils.findField(clazz, fieldName);
         assert field != null;

@@ -1,4 +1,5 @@
-1. step definition
-2. bean mapper enhancement
-3. create bean with static method
-4. repository
+
+1. repository
+2. chain copy
+3. gauss chain bug
+4. add validation for Mappers and FieldMapping

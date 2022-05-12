@@ -20,7 +20,6 @@ import java.lang.annotation.*;
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
 @Component
-@Inherited
 @Repeatable(Chains.class)
 public @interface Chain {
 

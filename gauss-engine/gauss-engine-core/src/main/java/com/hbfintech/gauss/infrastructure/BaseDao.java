@@ -3,6 +3,13 @@ package com.hbfintech.gauss.infrastructure;
 import java.util.List;
 import java.util.Map;
 
+/**
+ *
+ * @author Chang Su
+ * @version 1.0
+ * @since 10/05/2022
+ * @param <P> base persistent object
+ */
 public interface BaseDao<P> {
 
     default P select(Long id) {return null;}

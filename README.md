@@ -142,7 +142,6 @@ public class FintechFactory extends GaussFactory<Operation, Procedure> {
 public class FintechFactory extends GaussFactory<Operation, Procedure> {
 
 
-    @Component
     @Chain(factory = FintechFactory.class, sequence = 1)
     public static class Apply implements Operation {
 
@@ -153,7 +152,6 @@ public class FintechFactory extends GaussFactory<Operation, Procedure> {
         }
     }
 
-    @Component
     @Chain(factory = FintechFactory.class, sequence = 2)
     public static class Repay implements Operation {
         @Override
@@ -173,7 +171,6 @@ public class FintechFactory extends GaussFactory<Operation, Procedure> {
 
     public static final Function<Operation, Procedure> PROCEDURE_FUNCTION = o -> new Procedure(){{setOperation(o);}};
 
-    @Component
     @Chain(factory = FintechFactory.class, sequence = 1)
     public static class Apply implements Operation {
 
@@ -184,7 +181,6 @@ public class FintechFactory extends GaussFactory<Operation, Procedure> {
         }
     }
 
-    @Component
     @Chain(factory = FintechFactory.class, sequence = 2)
     public static class Repay implements Operation {
         @Override
@@ -223,7 +219,6 @@ public class FintechFactory extends GaussFactory<Operation, RepayFlow> {
       return repayFlow;
     };
 
-    @Component
     @Chain(factory = FintechFactory.class, sequence = 1)
     public static class Apply implements Operation {
 
@@ -234,7 +229,6 @@ public class FintechFactory extends GaussFactory<Operation, RepayFlow> {
         }
     }
 
-    @Component
     @Chain(factory = FintechFactory.class, sequence = 2)
     public static class Repay implements Operation {
         @Override

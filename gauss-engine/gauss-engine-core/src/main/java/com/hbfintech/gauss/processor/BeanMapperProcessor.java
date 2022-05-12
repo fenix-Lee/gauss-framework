@@ -52,7 +52,7 @@ public class BeanMapperProcessor implements BeanPostProcessor {
         Map<String, String[]> fieldMaps = new HashMap<>(fields.length);
         Arrays.stream(fields).forEach(f -> {
             Mappings mappings; FieldMapping fieldMapping;
-            if (ObjectUtils.isEmpty(mappings= f.getAnnotation(Mappings.class))) {
+            if (ObjectUtils.isEmpty(mappings = f.getAnnotation(Mappings.class))) {
                 if (ObjectUtils.isEmpty(fieldMapping = f.getAnnotation(FieldMapping.class)))
                     return;
 
