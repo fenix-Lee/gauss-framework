@@ -7,8 +7,12 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Component;
+import org.springframework.util.ClassUtils;
+import org.springframework.util.ObjectUtils;
+import org.springframework.util.ReflectionUtils;
 
 import java.lang.annotation.Annotation;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -31,17 +35,14 @@ public class BeanFactory implements ApplicationContextAware {
 
     @SuppressWarnings("unchecked")
     public static <T> T acquireBean(Class<T> clazz) {
-        Class<GaussFactory<?,?>> gaussFactoryClass;
-        try {
-            gaussFactoryClass = (Class<GaussFactory<?, ?>>) Class
-                    .forName("com.hbfintech.gauss.factory.GaussFactory");
-        } catch (ClassNotFoundException e) {
-            throw new RuntimeException(e);
-        }
-        if (clazz.getSuperclass().getCanonicalName().equals(gaussFactoryClass.getCanonicalName())) {
+        if (checkIfFactory(clazz)) {
             return GaussFactoryGenerator.INSTANCE.getFactory(clazz);
         }
         return getObject(clazz);
+    }
+
+    public static Object acquireBean(String name) {
+        return context.getBean(name);
     }
 
     static <T> T getObject(Class<T> clazz) {
@@ -49,6 +50,9 @@ public class BeanFactory implements ApplicationContextAware {
     }
 
     public static <T> T getObjectCopy(Class<T> clazz) {
+        if (checkIfFactory(clazz)) {
+            return GaussFactoryGenerator.INSTANCE.getFactory(clazz);
+        }
         return copyObject(acquireBean(clazz));
     }
 
@@ -60,12 +64,39 @@ public class BeanFactory implements ApplicationContextAware {
 
     @SuppressWarnings("unchecked")
     public static<T> T originalCopy(T source) {
+        if (source instanceof Cloneable) {
+            // use clone method
+            try {
+                Method cloneMethod = Object.class.getDeclaredMethod("clone");
+                cloneMethod.setAccessible(true);
+                return (T)ReflectionUtils
+                        .invokeMethod(cloneMethod, source);
+            } catch (NoSuchMethodException e) {
+                throw new RuntimeException(e);
+            }
+        }
         T copy = (T) originalInstantiation(source.getClass());
         BeanUtils.copyProperties(source, copy);
         return copy;
     }
 
-    public static<T> T originalInstantiation(Class<T> clazz) {
+    @SuppressWarnings("unchecked")
+    private static boolean checkIfFactory(Class<?> sourceClass) {
+        Class<GaussFactory<?,?>> gaussFactoryClass;
+        try {
+            gaussFactoryClass = (Class<GaussFactory<?, ?>>) Class
+                    .forName("com.hbfintech.gauss.factory.GaussFactory");
+        } catch (ClassNotFoundException e) {
+            throw new RuntimeException(e);
+        }
+
+        if (sourceClass.getSuperclass().getCanonicalName().equals(gaussFactoryClass.getCanonicalName())) {
+            return true;
+        }
+        return false;
+    }
+
+    private static<T> T originalInstantiation(Class<T> clazz) {
         return BeanUtils.instantiateClass(clazz);
     }
 

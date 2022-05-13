@@ -33,7 +33,7 @@ public enum GaussFactoryGenerator {
             throw new RuntimeException("abstract class cannot be instantiated.....");
         }
         if (ifOrigin) {
-            return BeanFactory.originalInstantiation(clazz);
+            return BeanFactory.originalCopy(BeanFactory.getObject(clazz));
         }
         Creator creatorAnnotation = clazz.getAnnotation(Creator.class);
         Assert.notNull(creatorAnnotation, "cannot create this factory without @Creator annotation");

@@ -8,6 +8,7 @@ import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Component;
 import org.springframework.util.ObjectUtils;
 
+import javax.annotation.PostConstruct;
 import java.util.Map;
 
 /**
@@ -24,6 +25,7 @@ public class BeanMapper {
             .useAutoMapping(true)
             .build();
 
+    @PostConstruct
     public void init() {
         MAPPER_FACTORY.getConverterFactory()
                 .registerConverter(new CloneableConverter(BeanFactory.getCloneableClass()));

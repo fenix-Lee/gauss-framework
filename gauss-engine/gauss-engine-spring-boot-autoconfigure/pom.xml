@@ -5,7 +5,8 @@
     <parent>
         <groupId>com.hbfintech.gauss</groupId>
         <artifactId>gauss-engine</artifactId>
-        <version>1.1.2</version>
+        <version>1.2.1</version>
+        <relativePath>../pom.xml</relativePath>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
@@ -21,6 +22,11 @@
             <groupId>com.hbfintech.gauss</groupId>
             <artifactId>gauss-engine-core</artifactId>
             <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-autoconfigure</artifactId>
+            <version>2.6.6</version>
         </dependency>
     </dependencies>
 
