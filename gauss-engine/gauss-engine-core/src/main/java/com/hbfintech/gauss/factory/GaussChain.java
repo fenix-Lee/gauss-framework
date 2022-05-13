@@ -12,15 +12,17 @@ import org.springframework.lang.NonNull;
 import org.springframework.util.Assert;
 import org.springframework.util.ObjectUtils;
 
+import javax.annotation.Resource;
 import java.util.*;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
-public abstract class GaussChain<T> implements InitializingBean, ApplicationContextAware {
+public abstract class GaussChain<T> implements InitializingBean {
 
-    protected ApplicationContext context;
+    @Resource
+    private ApplicationContext context;
 
-    protected List<T> modules;
+    private List<T> modules;
 
     /*
      * strongly recommend returning a copy of operations instead of
@@ -31,13 +33,9 @@ public abstract class GaussChain<T> implements InitializingBean, ApplicationCont
         return copyModules();
     }
 
-    protected final List<T> accessModules() {
-        return modules;
-    }
-
     private List<T> copyModules() {
         return modules.stream()
-                .map(BeanFactory::originalCopy)
+                .map(BeanFactory::copyObject)
                 .collect(Collectors.toList());
     }
 
@@ -107,8 +105,8 @@ public abstract class GaussChain<T> implements InitializingBean, ApplicationCont
         });
     }
 
-    @Override
-    public void setApplicationContext(@NonNull ApplicationContext applicationContext) throws BeansException {
-        this.context = applicationContext;
-    }
+//    @Override
+//    public void setApplicationContext(@NonNull ApplicationContext applicationContext) throws BeansException {
+//        this.context = applicationContext;
+//    }
 }
