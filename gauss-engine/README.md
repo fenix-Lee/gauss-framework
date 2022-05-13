@@ -48,7 +48,7 @@ public class CarEntity implements Cloneable{
     }
 }
 ```
-这样，我们加上了```@OverrideClone```注解后，高斯引擎就知道这个类在拷贝时需要定制化。
+这样，我们加上了```@OverrideClone```注解后，高斯引擎就知道这个类在拷贝时需要定制化。(对于cloneable接口的使用，请参考Effective Java Third Edition Item 13)
 ```java
 CarEntity copy = BeanFactory.getObjectCopy(CarEntity.class);
 System.out.println(copy.getName());  // "copy"
@@ -131,7 +131,7 @@ public class Car {
 }
 ```
 ***注意***
-- 上面例子中，我们在Car里的owner属性上为CarDTO匹配了两个属性。当我们反向拷贝时(CarDTO->Car)，owner值将为null.BeanMapper无法知道将用哪个属性来进行拷贝(除非有相同属性名). 
+- 上面例子中，我们在Car里的owner属性上为CarDTO匹配了两个属性。当我们反向拷贝时(CarDTO->Car)，owner值将为null. 
 ### Module and Factory
 这里有跟上面相似的功能. 
 在上一篇中，我们使用了一个FintechFactory来举例说明Module和Factory的用法。如果我们写的Module想复用怎么办？例如，我们的Apply模块想在别的工厂中复用，我们可以
