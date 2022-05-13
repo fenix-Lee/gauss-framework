@@ -53,6 +53,11 @@ public class CarEntity implements Cloneable{
 CarEntity copy = BeanFactory.getObjectCopy(CarEntity.class);
 System.out.println(copy.getName());  // "copy"
 ```
+如果某个类是只读的，无法进行修改的话。我们还是可以给BeanFactory一个临时的行为，这样就可以临时进行定制化
+```java
+CarDTO carDTO = BeanFactory.getObjectCopy(CarDTO.class, c -> c.setOwnerName("copy"));
+System.out.println(carDTO.getOwnerName()); // "copy"
+```
 ### BeanMapper
 在上一篇中我们知道BeanMapper可以在对象间属性拷贝,也用了Car和CarEntity举了一个例子。那么如果我们的工程中有多个bean需要mapping该怎么优雅的申明？  
 我们可以集中在一个类上标明注解   
