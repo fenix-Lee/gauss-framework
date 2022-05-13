@@ -4,7 +4,7 @@
 这一篇是介绍高斯引擎的高阶用法
 前面一篇没有看到的可以参考[Gauss Engine Reference](https://github.com/fenix-Lee/gauss-framework)  
 ### BeanFactory
-在上一篇中，简单介绍了clone这个方法。下面问题来了，如果我想进行定制化clone，那要怎么办呢？正常情况情况下,我们要先implement Cloneable接口 然后覆盖clone方法，最后在调用，才能达到深拷贝的目的。这里我们也需要告诉告诉高斯引擎我们这个类要拷贝的话需要定制化。
+在上一篇中，简单介绍了clone这个方法。下面问题来了，如果我想进行定制化clone，那要怎么办呢？这里我们也需要告诉告诉高斯引擎我们这个类要拷贝的话需要定制化。
 ```java
 @Data
 @ToString
