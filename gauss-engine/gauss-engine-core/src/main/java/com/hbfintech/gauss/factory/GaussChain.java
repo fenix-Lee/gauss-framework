@@ -105,8 +105,4 @@ public abstract class GaussChain<T> implements InitializingBean {
         });
     }
 
-//    @Override
-//    public void setApplicationContext(@NonNull ApplicationContext applicationContext) throws BeansException {
-//        this.context = applicationContext;
-//    }
 }
