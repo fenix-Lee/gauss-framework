@@ -3,12 +3,9 @@ package com.hbfintech.gauss.factory;
 import com.hbfintech.gauss.basis.BeanFactory;
 import com.hbfintech.gauss.framework.Chain;
 import com.hbfintech.gauss.framework.Chains;
-import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.context.ApplicationContext;
-import org.springframework.context.ApplicationContextAware;
 import org.springframework.core.annotation.AnnotationUtils;
-import org.springframework.lang.NonNull;
 import org.springframework.util.Assert;
 import org.springframework.util.ObjectUtils;
 
@@ -39,6 +36,7 @@ public abstract class GaussChain<T> implements InitializingBean {
                 .collect(Collectors.toList());
     }
 
+    @SuppressWarnings("unused")
     public void setModules(List<T> modules) {
         this.modules = modules;
     }

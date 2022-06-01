@@ -21,6 +21,7 @@ public interface DomainFactory<T, R> {
      * @param mapper function of creating chains
      * @return list of chain
      */
+    @SuppressWarnings("unused")
     default List<R> produce(Function<? super T, ? extends R> mapper) {return null;}
 
     /**
@@ -29,5 +30,6 @@ public interface DomainFactory<T, R> {
      * @param mapper function of creating bean
      * @return R type bean
      */
+    @SuppressWarnings("unused")
     default R manufacture(Function<List<T>, ? extends R> mapper) { return null;}
 }

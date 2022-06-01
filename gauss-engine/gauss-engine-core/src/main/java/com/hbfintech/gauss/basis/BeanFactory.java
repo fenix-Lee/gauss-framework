@@ -8,9 +8,7 @@ import org.springframework.context.ApplicationContextAware;
 import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Component;
 import org.springframework.util.ObjectUtils;
-import org.springframework.util.ReflectionUtils;
 
-import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
@@ -58,14 +56,15 @@ public class BeanFactory implements ApplicationContextAware {
         return copyObject(getBean(clazz));
     }
 
+    @SuppressWarnings("unused")
     public static <T> T create(Class<T> clazz, Consumer<T> action) {
         T copy = create(clazz);
         action.accept(copy);
         return copy;
     }
 
-    @SuppressWarnings("unchecked")
     public static<T> T originalCopy(T source) {
+        @SuppressWarnings("unchecked")
         T copy = (T) originalInstantiation(source.getClass());
         BeanUtils.copyProperties(source, copy);
         return copy;
