@@ -23,9 +23,9 @@ import java.util.function.Consumer;
  *
  * @author Chang Su
  * @version 1.0
- * @since 4/3/2022
  * @see ApplicationContext
  * @see org.springframework.context.ApplicationContextAware
+ * @since 4/3/2022
  */
 @Component
 public class BeanFactory implements ApplicationContextAware {
@@ -34,6 +34,14 @@ public class BeanFactory implements ApplicationContextAware {
 
     private static final List<Class<?>> cloneableClazz = new ArrayList<>();
 
+    /**
+     * Get an instance of the object that client acquires through application context. Please use
+     * it wisely only if you are familiar with the underlying context container or use {@code BeanFactory#create}
+     * instead if you are in unknown situation.
+     *
+     * @param clazz class type the object
+     * @return an instance of the object
+     */
     public static <T> T getBean(Class<T> clazz) {
         if (Validator.checkIfFactory(clazz)) {
             return GaussFactoryGenerator.INSTANCE.getFactory(clazz);
@@ -41,6 +49,14 @@ public class BeanFactory implements ApplicationContextAware {
         return getObject(clazz);
     }
 
+    /**
+     * Get an instance of the object that client acquires through application context. Please use
+     * it wisely only if you are familiar with the underlying context container or use {@code BeanFactory#create}
+     * instead if you are in unknown situation.
+     *
+     * @param name name of the object
+     * @return an instance of the object
+     */
     public static Object getBean(String name) {
         return context.getBean(name);
     }
@@ -99,6 +115,8 @@ public class BeanFactory implements ApplicationContextAware {
     }
 
     /**
+     * This method is inherited from Spring-aware component and leave here for client to replace the context
+     * container if client possible change application context implementation by its own.
      *
      * @param applicationContext bean container
      * @throws BeansException see {@code ApplicationContextException}
@@ -106,6 +124,8 @@ public class BeanFactory implements ApplicationContextAware {
     @Override
     public void setApplicationContext(@NonNull ApplicationContext applicationContext)
             throws BeansException {
-        context = applicationContext;
+        if (ObjectUtils.isEmpty(context)) {
+            context = applicationContext;
+        }
     }
 }

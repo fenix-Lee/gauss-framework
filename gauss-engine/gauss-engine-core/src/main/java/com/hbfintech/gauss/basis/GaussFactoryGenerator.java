@@ -1,9 +1,13 @@
 package com.hbfintech.gauss.basis;
 
 import com.hbfintech.gauss.factory.Creator;
+import com.hbfintech.gauss.factory.GaussFactory;
 import com.hbfintech.gauss.util.Validator;
 import org.springframework.core.annotation.AnnotationUtils;
 import org.springframework.util.Assert;
+import org.springframework.util.ReflectionUtils;
+
+import java.util.Objects;
 
 /**
  *
@@ -28,12 +32,13 @@ public enum GaussFactoryGenerator {
         return processFactory(clazz, ifOrigin);
     }
 
-    <T> T processFactory(Class<T> clazz, boolean ifOrigin) {
+    <T> T processFactory(Class<? extends T> clazz, boolean ifOrigin) {
         Creator creatorAnnotation = AnnotationUtils.findAnnotation(clazz, Creator.class);
         Assert.notNull(creatorAnnotation, "cannot create this factory without @Creator annotation");
         if (ifOrigin) {
             return BeanFactory.originalCopy(BeanFactory.getObject(clazz));
         }
+
         if (creatorAnnotation.isSingleton()) {
             if (BeanFactory.isReady()) {
                 return BeanFactory.getObject(clazz);

@@ -37,7 +37,7 @@ public abstract class GaussChain<T> implements InitializingBean {
     }
 
     @SuppressWarnings("unused")
-    public void setModules(List<T> modules) {
+    protected void setModules(List<T> modules) {
         this.modules = modules;
     }
 

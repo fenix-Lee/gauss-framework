@@ -9,11 +9,11 @@ package com.hbfintech.gauss.framework;
  * This class comes from the ideal of {@code java.nio.file.DirectoryStream.Filter}
  *
  * @author Chang Su
- * @since 28/02/2022
  * @see java.nio.file.DirectoryStream.Filter
- * @param <T> filter type
+ * @since 28/02/2022
  */
 @FunctionalInterface
+@SuppressWarnings("unused")
 public interface Filter<T> {
 
     /**

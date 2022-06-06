@@ -1,6 +1,7 @@
 package com.hbfintech.gauss.factory;
 
 import com.hbfintech.gauss.framework.DomainFactory;
+import com.hbfintech.gauss.framework.Module;
 
 import java.util.List;
 import java.util.function.Function;
