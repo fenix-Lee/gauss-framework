@@ -3,18 +3,18 @@ package com.hbfintech.gauss.factory;
 import com.hbfintech.gauss.basis.BeanFactory;
 import com.hbfintech.gauss.framework.Chain;
 import com.hbfintech.gauss.framework.Chains;
-import org.springframework.beans.factory.InitializingBean;
 import org.springframework.context.ApplicationContext;
 import org.springframework.core.annotation.AnnotationUtils;
 import org.springframework.util.Assert;
 import org.springframework.util.ObjectUtils;
 
+import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
 import java.util.*;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
-public abstract class GaussChain<T> implements InitializingBean {
+public abstract class GaussChain<T> {
 
     @Resource
     private ApplicationContext context;
@@ -48,9 +48,9 @@ public abstract class GaussChain<T> implements InitializingBean {
                 .collect(Collectors.toList());
     }
 
-    @Override
+    @PostConstruct
     @SuppressWarnings("unchecked")
-    public void afterPropertiesSet() {
+    private void afterPropertiesSet() {
         Class<?> chainClass = getClass();
         // get all classes with specific annotation
         // notice: this method will get different results(based on different version of spring boot)
