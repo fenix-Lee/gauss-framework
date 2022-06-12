@@ -18,7 +18,6 @@ public interface Filter<T> {
 
     /**
      * Decides if the given directory entry should be accepted or filtered.
-     *
      * @param   entry the entry to be tested
      * @return  {@code true} if the entry should be filtered
      */

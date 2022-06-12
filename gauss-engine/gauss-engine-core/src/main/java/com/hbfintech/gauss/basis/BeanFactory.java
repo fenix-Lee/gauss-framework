@@ -35,10 +35,9 @@ public class BeanFactory implements ApplicationContextAware {
     private static final List<Class<?>> cloneableClazz = new ArrayList<>();
 
     /**
-     * Get an instance of the object that client acquires through application context. Please use
-     * it wisely only if you are familiar with the underlying context container or use {@code BeanFactory#create}
+     * Get an instance of the object that client acquires through application context. Please use it wisely
+     * only if you are familiar with the underlying context container or use {@code BeanFactory#create}
      * instead if you are in unknown situation.
-     *
      * @param clazz class type the object
      * @return an instance of the object
      */
@@ -50,10 +49,9 @@ public class BeanFactory implements ApplicationContextAware {
     }
 
     /**
-     * Get an instance of the object that client acquires through application context. Please use
-     * it wisely only if you are familiar with the underlying context container or use {@code BeanFactory#create}
+     * Get an instance of the object that client acquires through application context. Please use it wisely
+     * only if you are familiar with the underlying context container or use {@code BeanFactory#create}
      * instead if you are in unknown situation.
-     *
      * @param name name of the object
      * @return an instance of the object
      */
@@ -117,7 +115,6 @@ public class BeanFactory implements ApplicationContextAware {
     /**
      * This method is inherited from Spring-aware component and leave here for client to replace the context
      * container if client possible change application context implementation by its own.
-     *
      * @param applicationContext bean container
      * @throws BeansException see {@code ApplicationContextException}
      */
