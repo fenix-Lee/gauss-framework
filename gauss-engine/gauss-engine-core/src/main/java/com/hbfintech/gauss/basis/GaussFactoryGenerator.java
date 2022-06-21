@@ -10,7 +10,7 @@ import org.springframework.util.ReflectionUtils;
 import java.util.Objects;
 
 /**
- *
+ * This is a factory generator aimed to create(or copy) factory which extends {@link GaussFactory}
  *
  * @author Chang Su
  * @version 1.0

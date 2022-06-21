@@ -12,10 +12,12 @@ import javax.annotation.PostConstruct;
 import java.util.Map;
 
 /**
- *
+ * Not only does {@link BeanMapper} copy all fields from one class to another, but does copy object same with
+ * {@code Cloneable}
  *
  * @author Chang Su
- * @version 1.0
+ * @version 1.1
+ * @see MapperFactory
  * @since 4/3/2022
  */
 @Component
@@ -42,6 +44,7 @@ public class BeanMapper {
         register(source, target, fieldMaps);
     }
 
+    @SuppressWarnings("unused")
     public static<S, D> void mapping(S source, D target) {
         MAPPER_FACTORY.getMapperFacade().map(source, target);
     }

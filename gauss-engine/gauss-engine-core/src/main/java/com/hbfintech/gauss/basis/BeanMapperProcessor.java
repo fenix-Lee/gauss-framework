@@ -1,4 +1,4 @@
-package com.hbfintech.gauss.processor;
+package com.hbfintech.gauss.basis;
 
 import com.hbfintech.gauss.framework.FieldMapping;
 import com.hbfintech.gauss.framework.Mapper;

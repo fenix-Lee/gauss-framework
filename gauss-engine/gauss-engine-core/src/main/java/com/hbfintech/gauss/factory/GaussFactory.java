@@ -19,6 +19,10 @@ import java.util.stream.Collectors;
 public abstract class GaussFactory<T, R> extends GaussChain<T>
         implements DomainFactory<T, R>, Cloneable {
 
+    public List<T> produce() {
+        return getModules();
+    }
+
     @Override
     public List<R> produce(Function<? super T, ? extends R> mapper) {
         return getModules().stream()

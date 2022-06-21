@@ -18,11 +18,11 @@ import java.util.function.Consumer;
  * assigned from Spring) as a utility tool. Furthermore, it has been enhanced by a
  * capability of "object copy".
  *
- * <b>Please use wisely of {@code BeanFactory#getBean} method coz it gives you the
+ * <b>Please use wisely of {@link BeanFactory#getBean} method coz it gives you the
  * singleton by default if context is from Spring framework</b>
  *
  * @author Chang Su
- * @version 1.0
+ * @version 1.1
  * @see ApplicationContext
  * @see org.springframework.context.ApplicationContextAware
  * @since 4/3/2022
@@ -98,13 +98,13 @@ public class BeanFactory implements ApplicationContextAware {
         return null;
     }
 
-    public static void addCloneableClazz(Class<?> clazz) {
+    static void addCloneableClazz(Class<?> clazz) {
         if (cloneableClazz.contains(clazz))
             return;
         cloneableClazz.add(clazz);
     }
 
-    public static Class<?>[] getCloneableClass() {
+    static Class<?>[] getCloneableClass() {
         return cloneableClazz.toArray(new Class<?>[0]);
     }
 
@@ -121,8 +121,6 @@ public class BeanFactory implements ApplicationContextAware {
     @Override
     public void setApplicationContext(@NonNull ApplicationContext applicationContext)
             throws BeansException {
-        if (ObjectUtils.isEmpty(context)) {
-            context = applicationContext;
-        }
+        context = applicationContext;
     }
 }

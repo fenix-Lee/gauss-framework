@@ -14,6 +14,14 @@ import java.util.*;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
+/**
+ * A component for combining all necessary chains for specific factory
+ *
+ * @author Chang Su
+ * @version 2.0
+ * @since 8/5/2022
+ * @param <T> chain class type
+ */
 public abstract class GaussChain<T> {
 
     @Resource
