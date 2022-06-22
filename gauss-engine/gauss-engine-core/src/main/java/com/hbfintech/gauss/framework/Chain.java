@@ -12,8 +12,8 @@ import java.lang.annotation.*;
  * factory class
  *
  * @author Chang Su
- * @since 2020/7/16
  * @see Chains
+ * @since 2020/7/16
  *
  */
 @Target(ElementType.TYPE)

@@ -6,7 +6,9 @@ import java.lang.annotation.*;
 
 /**
  *
- *
+ * @author Chang Su
+ * @version 1.0
+ * @since 7/5/2022
  */
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)

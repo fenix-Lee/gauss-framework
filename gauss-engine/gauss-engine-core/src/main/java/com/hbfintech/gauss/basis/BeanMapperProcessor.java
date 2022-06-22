@@ -4,7 +4,6 @@ import com.hbfintech.gauss.framework.FieldMapping;
 import com.hbfintech.gauss.framework.Mapper;
 import com.hbfintech.gauss.framework.Mappers;
 import com.hbfintech.gauss.framework.Mappings;
-import com.hbfintech.gauss.basis.BeanMapper;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.config.BeanPostProcessor;
 import org.springframework.core.annotation.AnnotationUtils;

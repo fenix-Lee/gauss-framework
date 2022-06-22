@@ -29,11 +29,7 @@ public abstract class GaussChain<T> {
 
     private List<T> modules;
 
-    /*
-     * strongly recommend returning a copy of operations instead of
-     * original one
-     *
-     */
+    // strongly recommend returning a copy of operations instead of original one
     public List<T> getModules() {
         return copyModules();
     }
