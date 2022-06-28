@@ -2,7 +2,7 @@ package com.hbfintech.gauss.basis;
 
 import com.hbfintech.gauss.factory.Creator;
 import com.hbfintech.gauss.factory.GaussFactory;
-import com.hbfintech.gauss.util.Validator;
+import com.hbfintech.gauss.util.FactoryValidator;
 import org.springframework.core.annotation.AnnotationUtils;
 import org.springframework.util.Assert;
 
@@ -22,7 +22,7 @@ public enum GaussFactoryGenerator {
     }
 
     public <T> T getFactory(Class<T> clazz, boolean ifOrigin) {
-        if (!Validator.checkIfFactory(clazz)) {
+        if (!FactoryValidator.checkIfFactory(clazz)) {
             throw new RuntimeException(" cannot create non-factory class in factory generator");
         }
 

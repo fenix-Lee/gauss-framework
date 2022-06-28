@@ -14,7 +14,7 @@ import java.util.Objects;
  * @version 1.0
  * @since 19/05/2022
  */
-public class Validator {
+public class FactoryValidator {
 
     @SuppressWarnings("unchecked")
     public static boolean checkIfFactory(Class<?> sourceClass) {
@@ -43,9 +43,13 @@ public class Validator {
 
         List<Class<?>> allSuperClasses = new ArrayList<>();
         Class<?> current = clazz;
-        while (current != null) {
-            allSuperClasses.add(current.getSuperclass());
-            current = current.getSuperclass();
+        while (true) {
+            Class<?> superClass = current.getSuperclass();
+            if (ObjectUtils.isEmpty(superClass)) {
+                break;
+            }
+            allSuperClasses.add(superClass);
+            current = superClass;
         }
         return allSuperClasses;
     }

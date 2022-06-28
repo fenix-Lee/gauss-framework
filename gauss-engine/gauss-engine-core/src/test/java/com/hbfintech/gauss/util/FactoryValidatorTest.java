@@ -6,11 +6,11 @@ import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
 
 @RunWith(JUnit4.class)
-public class ValidatorTest {
+public class FactoryValidatorTest {
 
     @Test
     public void factoryValidationTest() {
-        boolean flag = Validator.checkIfFactory(MultiLayersFactory.class);
+        boolean flag = FactoryValidator.checkIfFactory(MultiLayersFactory.class);
         Assert.assertTrue(flag);
     }
 }

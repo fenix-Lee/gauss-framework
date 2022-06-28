@@ -1,6 +1,6 @@
 package com.hbfintech.gauss.basis;
 
-import com.hbfintech.gauss.util.Validator;
+import com.hbfintech.gauss.util.FactoryValidator;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
@@ -42,7 +42,7 @@ public class BeanFactory implements ApplicationContextAware {
      * @return an instance of the object
      */
     public static <T> T getBean(Class<T> clazz) {
-        if (Validator.checkIfFactory(clazz)) {
+        if (FactoryValidator.checkIfFactory(clazz)) {
             return GaussFactoryGenerator.INSTANCE.getFactory(clazz);
         }
         return getObject(clazz);
@@ -64,7 +64,7 @@ public class BeanFactory implements ApplicationContextAware {
     }
 
     public static <T> T create(Class<T> clazz) {
-        if (Validator.checkIfFactory(clazz)) {
+        if (FactoryValidator.checkIfFactory(clazz)) {
             return GaussFactoryGenerator.INSTANCE.processFactory(clazz, false);
         }
         return copyObject(getBean(clazz));
