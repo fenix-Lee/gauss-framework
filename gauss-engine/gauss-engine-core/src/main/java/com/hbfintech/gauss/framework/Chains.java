@@ -20,7 +20,6 @@ public @interface Chains {
 
     /**
      * contains all chain info for specific module
-     *
      * @return all Chain info
      */
     Chain[] value();

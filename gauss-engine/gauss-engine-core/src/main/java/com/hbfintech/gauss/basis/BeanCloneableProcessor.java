@@ -1,7 +1,6 @@
-package com.hbfintech.gauss.processor;
+package com.hbfintech.gauss.basis;
 
 import com.hbfintech.gauss.framework.OverrideClone;
-import com.hbfintech.gauss.basis.BeanFactory;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.config.BeanPostProcessor;
 import org.springframework.core.annotation.AnnotationUtils;

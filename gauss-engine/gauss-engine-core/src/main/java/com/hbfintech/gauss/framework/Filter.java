@@ -9,16 +9,15 @@ package com.hbfintech.gauss.framework;
  * This class comes from the ideal of {@code java.nio.file.DirectoryStream.Filter}
  *
  * @author Chang Su
- * @since 28/02/2022
  * @see java.nio.file.DirectoryStream.Filter
- * @param <T> filter type
+ * @since 28/02/2022
  */
 @FunctionalInterface
+@SuppressWarnings("unused")
 public interface Filter<T> {
 
     /**
      * Decides if the given directory entry should be accepted or filtered.
-     *
      * @param   entry the entry to be tested
      * @return  {@code true} if the entry should be filtered
      */

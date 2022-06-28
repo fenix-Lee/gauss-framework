@@ -9,7 +9,7 @@
 <dependency>
      <groupId>com.hbfintech.gauss</groupId>
      <artifactId>gauss-engine-spring-boot-starter</artifactId>
-     <version>1.2.3</version>
+     <version>1.3.0</version>
 </dependency>
 ```
 ### BeanFactory
@@ -27,14 +27,14 @@ public class Car {
 ```
 这里我们申明一个Car的类，如果我们需要这个类就可以
 ```java
-Car myCar = BeanFactory.acquireBean(Car.class);
+Car myCar = BeanFactory.getBean(Car.class);
 ```
 如果需要clone这个类只需要
 ```java
-Car secondCar = BeanFactory.getObjectCopy(Car.class);
+Car secondCar = BeanFactory.create(Car.class);
 ```
-这里获取的secondCar将不在是Spring管理的单例，而是clone后的car  
-- 注意```acquireBean```方法的使用。如果是非工厂实体类,底层调用的是Spring容器中的实例(默认单例),请小心使用。
+这里获取的secondCar是clone后的car  
+- 注意```getBean```方法的使用。如果是非工厂实体类,底层调用的是Spring容器中的实例(默认单例),请小心使用。
 ### BeanMapper
 BeanMapper是为了解决对象与对象之间属性的拷贝而写的“冗余”代码。
 ```java
@@ -77,9 +77,10 @@ System.out.println(carEntity.getOwnerName) // 将是car里owner的值
 - 如果想要用BeanMapper进行对象字段复制需要有get和set方法(如果没有，字段将不可复制)
 - 这里默认是双向的，只要申明一次就可以相互复制(用上面的例子，CarEntity向Car复制也是可以的)
 - 如果两个对象的字段都一模一样，则无需任何操作就可以直接使用BeanMapper来转
-- 如果目前项目中有些实体类无法添加注解，可以手动向BeanMapper里注册(fieldMap是需要匹配的字段）
+- 目前只支持两个字段同类型相互匹配，类型不一致可能导致出错
+- 如果目前项目中有些实体类无法添加注解，可以手动向BeanMapper里注册(fieldMap是一个Map，key对应的是要匹配的字段名，value是第一个String数组，是匹配当前key的所有字段）
 ```java
-BeanMapper.register(source.class, target.class, fieldMap[]);
+BeanMapper.register(source.class, target.class, fieldMap);
 ```
 ### Module and Factory
 很多时候我们都知道要用xxx设计模式,但是用起来却不得要领。

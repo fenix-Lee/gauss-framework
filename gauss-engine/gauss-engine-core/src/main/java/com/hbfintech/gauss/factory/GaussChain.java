@@ -3,45 +3,45 @@ package com.hbfintech.gauss.factory;
 import com.hbfintech.gauss.basis.BeanFactory;
 import com.hbfintech.gauss.framework.Chain;
 import com.hbfintech.gauss.framework.Chains;
-import org.springframework.beans.BeansException;
-import org.springframework.beans.factory.InitializingBean;
 import org.springframework.context.ApplicationContext;
-import org.springframework.context.ApplicationContextAware;
 import org.springframework.core.annotation.AnnotationUtils;
-import org.springframework.lang.NonNull;
 import org.springframework.util.Assert;
 import org.springframework.util.ObjectUtils;
 
+import javax.annotation.PostConstruct;
+import javax.annotation.Resource;
 import java.util.*;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
-public abstract class GaussChain<T> implements InitializingBean, ApplicationContextAware {
+/**
+ * A component for combining all necessary chains for specific factory
+ *
+ * @author Chang Su
+ * @version 2.0
+ * @since 8/5/2022
+ * @param <T> chain class type
+ */
+public abstract class GaussChain<T> {
 
-    protected ApplicationContext context;
+    @Resource
+    private ApplicationContext context;
 
-    protected List<T> modules;
+    private List<T> modules;
 
-    /*
-     * strongly recommend returning a copy of operations instead of
-     * original one
-     *
-     */
+    // strongly recommend returning a copy of operations instead of original one
     public List<T> getModules() {
         return copyModules();
     }
 
-    protected final List<T> accessModules() {
-        return modules;
-    }
-
     private List<T> copyModules() {
         return modules.stream()
-                .map(BeanFactory::originalCopy)
+                .map(BeanFactory::copyObject)
                 .collect(Collectors.toList());
     }
 
-    public void setModules(List<T> modules) {
+    @SuppressWarnings("unused")
+    protected void setModules(List<T> modules) {
         this.modules = modules;
     }
 
@@ -52,9 +52,9 @@ public abstract class GaussChain<T> implements InitializingBean, ApplicationCont
                 .collect(Collectors.toList());
     }
 
-    @Override
+    @PostConstruct
     @SuppressWarnings("unchecked")
-    public void afterPropertiesSet() {
+    private void afterPropertiesSet() {
         Class<?> chainClass = getClass();
         // get all classes with specific annotation
         // notice: this method will get different results(based on different version of spring boot)
@@ -107,8 +107,4 @@ public abstract class GaussChain<T> implements InitializingBean, ApplicationCont
         });
     }
 
-    @Override
-    public void setApplicationContext(@NonNull ApplicationContext applicationContext) throws BeansException {
-        this.context = applicationContext;
-    }
 }

@@ -14,6 +14,7 @@ import java.lang.annotation.*;
 @Documented
 @Component
 @Inherited
+@SuppressWarnings("unused")
 public @interface Indicator {
     int value();
 }
