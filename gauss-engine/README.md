@@ -50,12 +50,12 @@ public class CarEntity implements Cloneable{
 ```
 这样，我们加上了```@OverrideClone```注解后，高斯引擎就知道这个类在拷贝时需要定制化。
 ```java
-CarEntity copy = BeanFactory.getObjectCopy(CarEntity.class);
+CarEntity copy = BeanFactory.create(CarEntity.class);
 System.out.println(copy.getName());  // "copy"
 ```
 如果某个类是只读的，无法进行修改的话。我们还是可以给BeanFactory一个临时的行为，这样就可以临时进行定制化
 ```java
-CarDTO carDTO = BeanFactory.getObjectCopy(CarDTO.class, c -> c.setOwnerName("copy"));
+CarDTO carDTO = BeanFactory.create(CarDTO.class, c -> c.setOwnerName("copy"));
 System.out.println(carDTO.getOwnerName()); // "copy"
 ```
 ### BeanMapper
