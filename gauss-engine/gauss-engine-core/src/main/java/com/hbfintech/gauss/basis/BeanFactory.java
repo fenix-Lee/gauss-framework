@@ -1,5 +1,6 @@
 package com.hbfintech.gauss.basis;
 
+import com.hbfintech.gauss.factory.GaussFactory;
 import com.hbfintech.gauss.util.FactoryValidator;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.BeansException;
@@ -56,7 +57,11 @@ public class BeanFactory implements ApplicationContextAware {
      * @return an instance of the object
      */
     public static Object getBean(String name) {
-        return context.getBean(name);
+        Object obj = context.getBean(name);
+        if (ObjectUtils.isEmpty(obj)) {
+            return null;
+        }
+        return getBean(obj.getClass());
     }
 
     static <T> T getObject(Class<T> clazz) {
@@ -114,7 +119,7 @@ public class BeanFactory implements ApplicationContextAware {
 
     /**
      * This method is inherited from Spring-aware component and leave here for client to replace the context
-     * container if client possible change application context implementation by its own.
+     * container if client wishes to change context implementation by its own.
      * @param applicationContext bean container
      * @throws BeansException see {@code ApplicationContextException}
      */
