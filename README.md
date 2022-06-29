@@ -9,7 +9,7 @@
 <dependency>
      <groupId>com.hbfintech.gauss</groupId>
      <artifactId>gauss-engine-spring-boot-starter</artifactId>
-     <version>1.3.1</version>
+     <version>1.3.2</version>
 </dependency>
 ```
 ### BeanFactory
@@ -73,7 +73,7 @@ CarEntity carEntity = BeanMapper.mapping(myCar, CarEntity.class);
 System.out.println(carEntity.getOwnerName) // 将是car里owner的值
 ```
 ***注意***
-- 这里的```@Mapper```不要跟mybatis里的mapper搞混了(如果该类使用了@FieldMapping注解则@Mapper里的target属性需要填写，否则校验将无法通过)
+- 这里的```@Mapper```不要跟mybatis里的mapper搞混了
 - 如果想要用BeanMapper进行对象字段复制需要有get和set方法(如果没有，字段将不可复制)
 - 这里默认是双向的，只要申明一次就可以相互复制(用上面的例子，CarEntity向Car复制也是可以的)
 - 如果两个对象的字段都一模一样，则无需任何操作就可以直接使用BeanMapper来转
@@ -195,7 +195,7 @@ public class FintechFactory extends GaussFactory<Operation, Procedure> {
 这里的常量```PROCEDURE_FUNCTION```就是为了工厂提供生成实体类的"函数",这样，我们就可以直接生成了```procedure```这个包装类
 ```java
 FintechFactory factory = GaussFactoryGenerator.INSTANCE.getFactory(FintechFactory.class);
-List<Procedure> procedures = factory.wrap(FintechFactory.PROCEDURE_FUNCTION);
+List<Procedure> procedures = factory.produce(FintechFactory.PROCEDURE_FUNCTION);
 ```
 我们在来看工厂还能怎么生成对象
 ```java
