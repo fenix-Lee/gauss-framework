@@ -1,6 +1,5 @@
 package com.hbfintech.gauss.basis;
 
-import com.hbfintech.gauss.factory.GaussFactory;
 import com.hbfintech.gauss.util.FactoryValidator;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.BeansException;
