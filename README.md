@@ -9,7 +9,7 @@
 <dependency>
      <groupId>com.hbfintech.gauss</groupId>
      <artifactId>gauss-engine-spring-boot-starter</artifactId>
-     <version>1.3.2</version>
+     <version>1.3.3</version>
 </dependency>
 ```
 ### BeanFactory

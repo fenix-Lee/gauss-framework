@@ -42,6 +42,6 @@ public enum GaussFactoryGenerator {
             }
             throw new RuntimeException("Gauss factory generator is not ready");
         }
-        return BeanMapper.mapping(BeanFactory.getObject(clazz), clazz);
+        return BeanFactory.copyObject(BeanFactory.getObject(clazz));
     }
 }

@@ -1,7 +1,6 @@
 package com.hbfintech.gauss.factory;
 
 import com.hbfintech.gauss.framework.DomainFactory;
-import com.hbfintech.gauss.framework.Module;
 
 import java.util.List;
 import java.util.function.Function;
@@ -19,6 +18,7 @@ import java.util.stream.Collectors;
 public abstract class GaussFactory<T, R> extends GaussChain<T>
         implements DomainFactory<T, R>, Cloneable {
 
+    @SuppressWarnings("unused")
     public List<T> produce() {
         return getModules();
     }

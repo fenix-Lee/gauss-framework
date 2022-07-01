@@ -74,8 +74,10 @@ public abstract class GaussChain<T> {
             }
             Assert.notNull(chain.factory(), chain.getClass().getName() + "'s factory cannot be null.....");
             if (chain.factory().equals(chainClass)) {
-                if (container.containsKey(chain.sequence()))
-                    throw new RuntimeException();
+                if (container.containsKey(chain.sequence())) {
+                    throw new IllegalArgumentException(chain.getClass().getName() +
+                            "has already been contained please check the sequence.....");
+                }
                 container.put(chain.sequence(), (T)m);
             }
         });
