@@ -1,5 +1,6 @@
 package com.hbfintech.gauss.basis;
 
+import com.google.common.collect.Maps;
 import com.hbfintech.gauss.util.FactoryValidator;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.BeansException;
@@ -11,6 +12,8 @@ import org.springframework.util.ObjectUtils;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 import java.util.function.Consumer;
 
 /**
@@ -22,7 +25,7 @@ import java.util.function.Consumer;
  * singleton by default if context is from Spring framework</b>
  *
  * @author Chang Su
- * @version 1.1
+ * @version 2.0
  * @see ApplicationContext
  * @see org.springframework.context.ApplicationContextAware
  * @since 4/3/2022
@@ -33,6 +36,8 @@ public class BeanFactory implements ApplicationContextAware {
     private static ApplicationContext context;
 
     private static final List<Class<?>> cloneableClazz = new ArrayList<>();
+
+    private static final Map<Class<?>, Object> objectCache = Maps.newConcurrentMap();
 
     /**
      * Get an instance of the object that client acquires through application context. Please use it wisely
@@ -69,22 +74,29 @@ public class BeanFactory implements ApplicationContextAware {
 
     public static <T> T create(Class<T> clazz) {
         if (FactoryValidator.checkIfFactory(clazz)) {
-            return GaussFactoryGenerator.INSTANCE.processFactory(clazz, false);
+            return GaussFactoryGenerator.INSTANCE.getFactory(clazz);
         }
-        return copyObject(getBean(clazz));
+        try {
+            return copyObject(getObject(clazz));
+        } catch (BeansException e) {
+            return copyObject(createObject(clazz));
+        }
+    }
+
+    @SuppressWarnings("unchecked")
+    private static<T> T createObject(Class<T> clazz) {
+        if (objectCache.containsKey(clazz)) {
+            return (T) objectCache.get(clazz);
+        }
+        T obj = originalInstantiation(clazz);
+        objectCache.put(clazz, obj);
+        return obj;
     }
 
     @SuppressWarnings("unused")
     public static <T> T create(Class<T> clazz, Consumer<T> action) {
         T copy = create(clazz);
         action.accept(copy);
-        return copy;
-    }
-
-    public static<T> T originalCopy(T source) {
-        @SuppressWarnings("unchecked")
-        T copy = (T) originalInstantiation(source.getClass());
-        BeanUtils.copyProperties(source, copy);
         return copy;
     }
 

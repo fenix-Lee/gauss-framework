@@ -6,11 +6,13 @@ import com.hbfintech.gauss.util.FactoryValidator;
 import org.springframework.core.annotation.AnnotationUtils;
 import org.springframework.util.Assert;
 
+import java.lang.annotation.Annotation;
+
 /**
  * This is a factory generator aimed to create(or copy) factory which extends {@link GaussFactory}
  *
  * @author Chang Su
- * @version 1.0
+ * @version 2.0
  * @since 7/5/2022
  */
 public enum GaussFactoryGenerator {
@@ -18,24 +20,16 @@ public enum GaussFactoryGenerator {
     INSTANCE;
 
     public <T> T getFactory(Class<T> clazz) {
-        return getFactory(clazz, false);
-    }
-
-    public <T> T getFactory(Class<T> clazz, boolean ifOrigin) {
         if (!FactoryValidator.checkIfFactory(clazz)) {
-            throw new RuntimeException(" cannot create non-factory class in factory generator");
+            throw new IllegalArgumentException(" cannot create non-factory class in factory generator");
         }
 
-        return processFactory(clazz, ifOrigin);
-    }
-
-    <T> T processFactory(Class<? extends T> clazz, boolean ifOrigin) {
         Creator creatorAnnotation = AnnotationUtils.findAnnotation(clazz, Creator.class);
         Assert.notNull(creatorAnnotation, "cannot create this factory without @Creator annotation");
-        if (ifOrigin) {
-            return BeanFactory.originalCopy(BeanFactory.getObject(clazz));
-        }
+        return processFactory(clazz, creatorAnnotation);
+    }
 
+    <T> T processFactory(Class<T> clazz, Creator creatorAnnotation) {
         if (creatorAnnotation.isSingleton()) {
             if (BeanFactory.isReady()) {
                 return BeanFactory.getObject(clazz);

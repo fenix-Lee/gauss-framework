@@ -1,5 +1,6 @@
 package com.hbfintech.gauss.factory;
 
+import com.google.common.collect.Maps;
 import com.hbfintech.gauss.basis.BeanFactory;
 import com.hbfintech.gauss.framework.Chain;
 import com.hbfintech.gauss.framework.Chains;
@@ -60,7 +61,7 @@ public abstract class GaussChain<T> {
         // notice: this method will get different results(based on different version of spring boot)
         Map<String, Object> modulesWithChainsMap = context.getBeansWithAnnotation(Chains.class);
 
-        Map<Integer, T> container = new HashMap<>();
+        Map<Integer, T> container = Maps.newHashMapWithExpectedSize(modulesWithChainsMap.size());
         modulesWithChainsMap.values().forEach(m -> chainsAnnotationCap(chainClass,  container, (T)m));
 
         Map<String, Object> modulesWithChainMap = context.getBeansWithAnnotation(Chain.class);
