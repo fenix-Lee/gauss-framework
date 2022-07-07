@@ -10,6 +10,7 @@ import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Component;
 import org.springframework.util.ObjectUtils;
 
+import java.lang.reflect.Constructor;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -82,6 +83,15 @@ public class BeanFactory implements ApplicationContextAware {
         }
     }
 
+    @SuppressWarnings("unused")
+    public static <T> T create(Constructor<T> ctor, Object...args) {
+        Class<T> clazz = ctor.getDeclaringClass();
+        if (FactoryValidator.checkIfFactory(clazz)) {
+            return GaussFactoryGenerator.INSTANCE.getFactory(clazz);
+        }
+        return copyObject(createObject(ctor, args));
+    }
+
     @SuppressWarnings("unchecked")
     private static<T> T createObject(Class<T> clazz) {
         if (objectCache.containsKey(clazz)) {
@@ -90,6 +100,10 @@ public class BeanFactory implements ApplicationContextAware {
         T obj = originalInstantiation(clazz);
         objectCache.put(clazz, obj);
         return obj;
+    }
+
+    private static<T> T createObject(Constructor<T> ctor, Object... args) {
+        return originalInstantiationWithConstructor(ctor, args);
     }
 
     @SuppressWarnings("unused")
@@ -101,6 +115,10 @@ public class BeanFactory implements ApplicationContextAware {
 
     private static<T> T originalInstantiation(Class<T> clazz) {
         return BeanUtils.instantiateClass(clazz);
+    }
+
+    private static <T> T originalInstantiationWithConstructor(Constructor<T> ctor, Object... args) {
+        return BeanUtils.instantiateClass(ctor, args);
     }
 
     @SuppressWarnings("unchecked")
