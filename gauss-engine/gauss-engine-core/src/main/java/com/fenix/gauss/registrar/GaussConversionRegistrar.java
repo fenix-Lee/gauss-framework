@@ -25,12 +25,12 @@ public class GaussConversionRegistrar implements ImportBeanDefinitionRegistrar,
     }
 
     @Override
-    public void setEnvironment(Environment environment) {
+    public void setEnvironment(@NonNull Environment environment) {
         this.environment = environment;
     }
 
     @Override
-    public void setResourceLoader(ResourceLoader resourceLoader) {
+    public void setResourceLoader(@NonNull ResourceLoader resourceLoader) {
         this.resourceLoader = resourceLoader;
     }
 

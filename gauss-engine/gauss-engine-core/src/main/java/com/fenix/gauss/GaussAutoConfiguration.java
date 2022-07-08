@@ -1,9 +1,8 @@
 package com.fenix.gauss;
 
 import org.springframework.boot.SpringBootConfiguration;
+import org.springframework.context.annotation.ComponentScan;
 
 @SpringBootConfiguration
-public class GaussAutoConfiguration {
-
-
-}
+@ComponentScan
+public class GaussAutoConfiguration {}
