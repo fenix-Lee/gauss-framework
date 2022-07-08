@@ -39,7 +39,7 @@ public class BeanFactory implements ApplicationContextAware {
 
     /**
      * Get an instance of the object that client acquires through application context. Please use it wisely
-     * only if you are familiar with the underlying context container or use {@code BeanFactory#create}
+     * only if you are familiar with the underlying context container or use {@link BeanFactory#create}
      * instead if you are in unknown situation.
      * @param clazz class type the object
      * @return an instance of the object
@@ -54,7 +54,7 @@ public class BeanFactory implements ApplicationContextAware {
 
     /**
      * Get an instance of the object that client acquires through application context. Please use it wisely
-     * only if you are familiar with the underlying context container or use {@code BeanFactory#create}
+     * only if you are familiar with the underlying context container or use {@link BeanFactory#create}
      * instead if you are in unknown situation.
      * @param name name of the object
      * @return an instance of the object
@@ -103,6 +103,22 @@ public class BeanFactory implements ApplicationContextAware {
                         .map(Object::getClass).toArray()))
                 .findAny();
         return copyObject(createObjectWithCtor(properCtor.orElseThrow(IllegalArgumentException::new), args));
+    }
+
+    /**
+     * use specific constructor to create an object
+     * @param ctor the specific constructor of object
+     * @param args constructor parameters
+     * @return an instance of object
+     * @param <T> the type of object
+     */
+    @SuppressWarnings("unused")
+    public static <T> T create(Constructor<T> ctor, Object...args) {
+        Class<T> clazz = ctor.getDeclaringClass();
+        if (FactoryValidator.checkIfFactory(clazz)) {
+            return GaussFactoryGenerator.INSTANCE.getFactory(clazz);
+        }
+        return copyObject(createObjectWithCtor(ctor, args));
     }
 
     @SuppressWarnings("unchecked")
