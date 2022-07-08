@@ -15,7 +15,6 @@
     <packaging>pom</packaging>
     <modules>
         <module>gauss-engine-spring-boot-starter</module>
-        <module>gauss-engine-spring-boot-autoconfigure</module>
         <module>gauss-engine-core</module>
     </modules>
 

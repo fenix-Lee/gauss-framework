@@ -20,7 +20,7 @@
     <dependencies>
         <dependency>
             <groupId>com.fenix.gauss</groupId>
-            <artifactId>gauss-engine-spring-boot-autoconfigure</artifactId>
+            <artifactId>gauss-engine-core</artifactId>
             <version>${project.version}</version>
         </dependency>
     </dependencies>
