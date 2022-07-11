@@ -1,5 +1,7 @@
 package com.fenix.gauss.framework;
 
+import com.fenix.gauss.infrastructure.DefaultProcessor;
+import ma.glasnost.orika.CustomConverter;
 import org.springframework.stereotype.Component;
 
 import java.lang.annotation.*;
@@ -33,11 +35,11 @@ public @interface FieldMapping {
      * for which two fields need to be converted by custom convertor
      * @return conversion processor
      */
-    Class<?> processor();
+    Class<?> processor() default DefaultProcessor.class;
 
     /**
-     * mark of the specific function for conversion
-     * @return the tag of conversion function
+     * which field should be used for conversion
+     * @return the position of conversion implementation
      */
-    String tag();
+    String tag() default "default";
 }

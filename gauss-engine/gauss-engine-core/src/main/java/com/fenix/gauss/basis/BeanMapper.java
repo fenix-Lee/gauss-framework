@@ -1,5 +1,7 @@
 package com.fenix.gauss.basis;
 
+import com.fenix.gauss.infrastructure.FieldEngine;
+import com.google.common.collect.Lists;
 import ma.glasnost.orika.MapperFactory;
 import ma.glasnost.orika.converter.builtin.CloneableConverter;
 import ma.glasnost.orika.impl.DefaultMapperFactory;
@@ -9,6 +11,8 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.ObjectUtils;
 
 import javax.annotation.PostConstruct;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -27,10 +31,17 @@ public class BeanMapper {
             .useAutoMapping(true)
             .build();
 
+    private static final List<FieldEngine> fieldEngines = Lists.newCopyOnWriteArrayList();
+
     @PostConstruct
     public void init() {
         MAPPER_FACTORY.getConverterFactory()
                 .registerConverter(new CloneableConverter(BeanFactory.getCloneableClass()));
+        if (!fieldEngines.isEmpty()) {
+            fieldEngines.forEach(e -> {
+
+                    });
+        }
     }
 
     public static<S,D> void mapperRegister(Class<S> source,
@@ -71,5 +82,9 @@ public class BeanMapper {
         MAPPER_FACTORY.classMap(source, target)
                 .byDefault()
                 .register();
+    }
+
+    static void addFieldEngine (FieldEngine fieldEngine) {
+        fieldEngines.add(fieldEngine);
     }
 }

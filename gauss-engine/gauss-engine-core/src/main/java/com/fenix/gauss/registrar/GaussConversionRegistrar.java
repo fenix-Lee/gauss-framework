@@ -3,6 +3,7 @@ package com.fenix.gauss.registrar;
 import com.fenix.gauss.framework.EnableGaussEngine;
 import com.fenix.gauss.framework.GaussConvertor;
 import org.springframework.beans.factory.annotation.AnnotatedBeanDefinition;
+import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.support.BeanDefinitionRegistry;
 import org.springframework.context.EnvironmentAware;
 import org.springframework.context.ResourceLoaderAware;
@@ -21,6 +22,13 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
+/**
+ *
+ * @author Chang Su
+ * @version 1.0
+ * @see ImportBeanDefinitionRegistrar
+ * @since 8/7/2022
+ */
 @Component
 public class GaussConversionRegistrar implements ImportBeanDefinitionRegistrar,
         ResourceLoaderAware, EnvironmentAware {
@@ -54,10 +62,13 @@ public class GaussConversionRegistrar implements ImportBeanDefinitionRegistrar,
         Map<String, Object> attrs = metadata
                 .getAnnotationAttributes(EnableGaussEngine.class.getName());
         AnnotationTypeFilter annotationTypeFilter = new AnnotationTypeFilter(GaussConvertor.class);
-        final Class<?>[] clients = attrs == null ? null : (Class<?>[]) attrs.get("clients");
-        if (clients == null || clients.length == 0) {
-            scanner.addIncludeFilter(annotationTypeFilter);
-            basePackages = getBasePackages(metadata);
+        scanner.addIncludeFilter(annotationTypeFilter);
+        basePackages = getBasePackages(metadata);
+        basePackages.remove("com.fenix.gauss"); // filter default convertor to base packages
+        for (String basePackage : basePackages) {
+            Set<BeanDefinition> candidateComponents = scanner
+                    .findCandidateComponents(basePackage);
+            System.out.println(candidateComponents);
         }
     }
 
