@@ -1,6 +1,6 @@
 package com.fenix.gauss.step;
 
-import com.fenix.gauss.basis.BeanFactory;
+import com.fenix.gauss.basis.GaussBeanFactory;
 import com.fenix.gauss.infrastructure.Binomial;
 import com.fenix.gauss.infrastructure.GaussDistribution;
 import io.cucumber.java.en.Given;
@@ -29,8 +29,8 @@ public class BaseDefinition {
     @SuppressWarnings("unchecked")
     public void insertData(String beanName, String name, List<List<String>> table)
             throws Exception {
-        Class<?> clazz = BeanFactory.getBean(beanName).getClass();
-        GaussDistribution<?, Binomial> repository = (GaussDistribution<?, Binomial>) BeanFactory.getBean(name);
+        Class<?> clazz = GaussBeanFactory.getBean(beanName).getClass();
+        GaussDistribution<?, Binomial> repository = (GaussDistribution<?, Binomial>) GaussBeanFactory.getBean(name);
         List<String> columNames = table.get(0);
         for (int i = 1; i < table.size(); i++) {
             List<String> data = table.get(i);
@@ -48,7 +48,7 @@ public class BaseDefinition {
     @When("I search this flow, which id is {long} with {string}")
     @SuppressWarnings("unchecked")
     public void searchFlow(long id, String name) {
-        GaussDistribution<?, Binomial> repository = (GaussDistribution<?, Binomial>) BeanFactory.getBean(name);
+        GaussDistribution<?, Binomial> repository = (GaussDistribution<?, Binomial>) GaussBeanFactory.getBean(name);
         Optional<?> po = ReflectionTestUtils.invokeMethod(repository, "queryEntity", id);
         Assert.assertTrue(null != po && po.isPresent());
         this.po = (Binomial) po.get();

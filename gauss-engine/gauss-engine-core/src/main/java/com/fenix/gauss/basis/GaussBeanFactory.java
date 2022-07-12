@@ -1,11 +1,15 @@
 package com.fenix.gauss.basis;
 
+import com.fenix.gauss.infrastructure.aspect.GaussCacheAspect;
 import com.google.common.collect.Maps;
 import com.fenix.gauss.util.FactoryValidator;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
+import org.springframework.context.ApplicationContextException;
 import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Component;
 import org.springframework.util.ObjectUtils;
@@ -15,11 +19,11 @@ import java.util.*;
 import java.util.function.Consumer;
 
 /**
- * BeanFactory is a new dynamic way to acquire bean from Application Context(not only
+ * GaussBeanFactory is a new dynamic way to acquire bean from Application Context(not only
  * assigned from Spring) as a utility tool. Furthermore, it has been enhanced by a
  * capability of "object copy".
  *
- * <b>Please use wisely of {@link BeanFactory#getBean} method coz it gives you the
+ * <b>Please use wisely of {@link GaussBeanFactory#getBean} method coz it gives you the
  * singleton by default if context is from Spring framework</b>
  *
  * @author Chang Su
@@ -29,7 +33,9 @@ import java.util.function.Consumer;
  * @since 4/3/2022
  */
 @Component
-public class BeanFactory implements ApplicationContextAware {
+public class GaussBeanFactory implements ApplicationContextAware {
+
+    private static final Log logger = LogFactory.getLog(GaussCacheAspect.class);
 
     private static ApplicationContext context;
 
@@ -39,7 +45,7 @@ public class BeanFactory implements ApplicationContextAware {
 
     /**
      * Get an instance of the object that client acquires through application context. Please use it wisely
-     * only if you are familiar with the underlying context container or use {@link BeanFactory#create}
+     * only if you are familiar with the underlying context container or use {@link GaussBeanFactory#create}
      * instead if you are in unknown situation.
      * @param clazz class type the object
      * @return an instance of the object
@@ -49,17 +55,26 @@ public class BeanFactory implements ApplicationContextAware {
         if (FactoryValidator.checkIfFactory(clazz)) {
             return GaussFactoryGenerator.INSTANCE.getFactory(clazz);
         }
-        return getObject(clazz);
+        if (isReady()) {
+            return getObject(clazz);
+        } else {
+            logger.error("GaussBeanFactory is not ready yet...");
+            throw new ApplicationContextException("GaussBeanFactory cannot get required bean....") ;
+        }
     }
 
     /**
      * Get an instance of the object that client acquires through application context. Please use it wisely
-     * only if you are familiar with the underlying context container or use {@link BeanFactory#create}
+     * only if you are familiar with the underlying context container or use {@link GaussBeanFactory#create}
      * instead if you are in unknown situation.
      * @param name name of the object
      * @return an instance of the object
      */
     public static Object getBean(String name) {
+        if (!isReady()) {
+            logger.error("GaussBeanFactory is not ready yet...");
+            throw new ApplicationContextException("GaussBeanFactory cannot get required bean....") ;
+        }
         Object obj = context.getBean(name);
         if (ObjectUtils.isEmpty(obj)) {
             return null;
@@ -81,6 +96,7 @@ public class BeanFactory implements ApplicationContextAware {
         try {
             return copyObject(getObject(clazz));
         } catch (BeansException e) {
+            logger.info(clazz + " is not in application context and will be instantiated originally...");
             return copyObject(createObject(clazz));
         }
     }
@@ -149,7 +165,7 @@ public class BeanFactory implements ApplicationContextAware {
     @SuppressWarnings("unchecked")
     public static<T> T copyObject(T source) {
         try {
-            return (T) BeanMapper.mapping(source, source.getClass());
+            return (T) GaussBeanMapper.mapping(source, source.getClass());
         } catch (Exception e) {
             e.printStackTrace();
         }

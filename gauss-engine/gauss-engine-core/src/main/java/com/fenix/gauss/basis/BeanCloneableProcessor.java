@@ -25,7 +25,7 @@ public class BeanCloneableProcessor implements BeanPostProcessor {
         if (ObjectUtils.isEmpty(overrideClone)) {
             return bean;
         } else if (overrideClone.value()) {
-            BeanFactory.addCloneableClazz(bean.getClass());
+            GaussBeanFactory.addCloneableClazz(bean.getClass());
         }
         return bean;
     }

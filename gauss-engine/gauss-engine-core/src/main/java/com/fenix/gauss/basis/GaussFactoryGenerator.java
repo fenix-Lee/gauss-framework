@@ -29,11 +29,11 @@ public enum GaussFactoryGenerator {
 
     <T> T processFactory(Class<T> clazz, Creator creatorAnnotation) {
         if (creatorAnnotation.isSingleton()) {
-            if (BeanFactory.isReady()) {
-                return BeanFactory.getObject(clazz);
+            if (GaussBeanFactory.isReady()) {
+                return GaussBeanFactory.getObject(clazz);
             }
             throw new RuntimeException("Gauss factory generator is not ready");
         }
-        return BeanFactory.copyObject(BeanFactory.getObject(clazz));
+        return GaussBeanFactory.copyObject(GaussBeanFactory.getObject(clazz));
     }
 }

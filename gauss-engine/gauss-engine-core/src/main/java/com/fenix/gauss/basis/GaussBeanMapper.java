@@ -11,12 +11,11 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.ObjectUtils;
 
 import javax.annotation.PostConstruct;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
 /**
- * Not only does {@link BeanMapper} copy all fields from one class to another, but does copy object same with
+ * Not only does {@link GaussBeanMapper} copy all fields from one class to another, but does copy object same with
  * {@code Cloneable}
  *
  * @author Chang Su
@@ -25,7 +24,7 @@ import java.util.Map;
  * @since 4/3/2022
  */
 @Component
-public class BeanMapper {
+public class GaussBeanMapper {
 
     private static final MapperFactory MAPPER_FACTORY = new DefaultMapperFactory.Builder()
             .useAutoMapping(true)
@@ -36,7 +35,7 @@ public class BeanMapper {
     @PostConstruct
     public void init() {
         MAPPER_FACTORY.getConverterFactory()
-                .registerConverter(new CloneableConverter(BeanFactory.getCloneableClass()));
+                .registerConverter(new CloneableConverter(GaussBeanFactory.getCloneableClass()));
         if (!fieldEngines.isEmpty()) {
             fieldEngines.forEach(e -> {
 

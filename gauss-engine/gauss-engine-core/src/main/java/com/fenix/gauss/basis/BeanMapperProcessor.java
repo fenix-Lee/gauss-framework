@@ -39,7 +39,7 @@ public class BeanMapperProcessor implements BeanPostProcessor {
             }
             GaussFieldEngine fieldEngine = GaussFieldEngine.fireUp(source, mapper.target());
             fieldEngine.setFieldMaps(source.getDeclaredFields());
-            BeanMapper.addFieldEngine(fieldEngine);
+            GaussBeanMapper.addFieldEngine(fieldEngine);
             return bean;
         }
 
@@ -47,7 +47,7 @@ public class BeanMapperProcessor implements BeanPostProcessor {
                 .forEach(m -> {
                     GaussFieldEngine fieldEngine = GaussFieldEngine.fireUp(source, m.target());
                     fieldEngine.setFieldMaps(source.getDeclaredFields());
-                    BeanMapper.addFieldEngine(fieldEngine);
+                    GaussBeanMapper.addFieldEngine(fieldEngine);
                 });
         return bean;
     }

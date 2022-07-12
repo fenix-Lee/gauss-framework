@@ -14,13 +14,16 @@ import java.lang.annotation.*;
 @Target(ElementType.METHOD)
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
-@Component
 public @interface GaussCache {
 
+    /**
+     * customize the prefix of cache key
+     * @return prefix of cache key
+     */
     String prefix() default "";
 
     /**
-     * spring EL expression
+     * springEL expression
      * @return custom key
      */
     String key() default "";

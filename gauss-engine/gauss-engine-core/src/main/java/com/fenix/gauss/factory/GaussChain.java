@@ -1,7 +1,7 @@
 package com.fenix.gauss.factory;
 
 import com.google.common.collect.Maps;
-import com.fenix.gauss.basis.BeanFactory;
+import com.fenix.gauss.basis.GaussBeanFactory;
 import com.fenix.gauss.framework.Chain;
 import com.fenix.gauss.framework.Chains;
 import org.springframework.context.ApplicationContext;
@@ -37,7 +37,7 @@ public abstract class GaussChain<T> {
 
     private List<T> copyModules() {
         return modules.stream()
-                .map(BeanFactory::copyObject)
+                .map(GaussBeanFactory::copyObject)
                 .collect(Collectors.toList());
     }
 

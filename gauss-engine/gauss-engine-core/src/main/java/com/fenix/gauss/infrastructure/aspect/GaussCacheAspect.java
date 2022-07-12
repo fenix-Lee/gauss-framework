@@ -1,6 +1,9 @@
 package com.fenix.gauss.infrastructure.aspect;
 
 import com.fenix.gauss.framework.GaussCache;
+import com.google.common.collect.Maps;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
@@ -9,79 +12,84 @@ import org.aspectj.lang.reflect.MethodSignature;
 import org.springframework.core.DefaultParameterNameDiscoverer;
 import org.springframework.expression.EvaluationContext;
 import org.springframework.expression.Expression;
-import org.springframework.expression.ExpressionParser;
+import org.springframework.expression.spel.SpelEvaluationException;
 import org.springframework.expression.spel.standard.SpelExpressionParser;
 import org.springframework.expression.spel.support.StandardEvaluationContext;
 import org.springframework.stereotype.Component;
+import org.springframework.util.ObjectUtils;
 
 import java.lang.reflect.Method;
+import java.util.Arrays;
+import java.util.Map;
+import java.util.Objects;
+import java.util.stream.Collectors;
 
 @Component
 @Aspect
 public class GaussCacheAspect {
 
+    private static final Log logger = LogFactory.getLog(GaussCacheAspect.class);
+
+    private static final Map<String, Object> local = Maps.newConcurrentMap();
+
     @Pointcut("@annotation(com.fenix.gauss.framework.GaussCache)")
     public void cachePointcut() {}
 
     @Around("cachePointcut()")
-    public Object cacheable(ProceedingJoinPoint joinPoint) {
-        Object result = null;
+    public Object cacheable(ProceedingJoinPoint joinPoint) throws Throwable {
+        Object result;
 
-        try
-        {
-            //1 获得重载后的方法名
-            MethodSignature signature = (MethodSignature) joinPoint.getSignature();
-            Method method = joinPoint.getTarget().getClass()
+        MethodSignature signature = (MethodSignature) joinPoint.getSignature();
+        Method proxyMethod;
+        try {
+            proxyMethod = joinPoint.getTarget().getClass()
                     .getMethod(signature.getName(),signature.getMethod().getParameterTypes());
-
-            //2 确定方法名后获得该方法上面配置的注解标签MyRedisCache
-            GaussCache gaussCacheAnnotation = method.getAnnotation(GaussCache.class);
-
-            //3 拿到了MyRedisCache这个注解标签，获得该注解上面配置的参数进行封装和调用
-            String prefix =  gaussCacheAnnotation.prefix();
-            String gaussCacheKey = gaussCacheAnnotation.key();
-
-            //4 SpringEL 解析器
-            ExpressionParser parser = new SpelExpressionParser();
-            Expression expression = parser.parseExpression(gaussCacheKey);
-            EvaluationContext context = new StandardEvaluationContext();
-
-            /**
-             *@MyRedisCache(value = "userv3",key = "#userId")  //redis:       userv3::17   UserObject
-             *public User findUserById(Integer userId)
-             *{
-             *    return null;
-             *}
-             */
-            //5 获得方法里面的形参个数
-            Object[] args = joinPoint.getArgs(); //Integer userId  17
-            DefaultParameterNameDiscoverer discoverer = new DefaultParameterNameDiscoverer();
-            String[] parameterNames = discoverer.getParameterNames(method);
-            for (int i = 0; i < parameterNames.length; i++) {
-                context.setVariable(parameterNames[i],args[i].toString());
-            }
-            //6 通过上述，拼接redis的最终key形式
-            String key = prefix+"::"+expression.getValue(context).toString();
-            System.out.println("MyRedisCacheAspect注解封装key："+key);
-
-//            //7 先去redis里面查询看有没有
-//            result = redisTemplate.opsForValue().get(key);
-//            if(result != null)
-//            {
-//                System.out.println("MyRedisCacheAspect里面从redis读取获得："+result);
-//                return result;
-//            }
-//            //8 redis里面没有，去找msyql查询或叫进行后续业务逻辑
-//            //-------aop精华部分,才去找findUserById方法干活
-            result = joinPoint.proceed();
-//
-//            //9 mysql步骤结束，还需要把结果存入redis一次，缓存补偿
-//            redisTemplate.opsForValue().set(key,result);
-
-        }catch (Throwable throwable){
-            throwable.printStackTrace();
+        } catch (NoSuchMethodException e) {
+            return null;
+        }
+        if (proxyMethod.getReturnType().equals(void.class)) {
+            return null;
         }
 
+        GaussCache gaussCacheAnnotation = proxyMethod.getAnnotation(GaussCache.class);
+        String prefix =  gaussCacheAnnotation.prefix();
+        if (ObjectUtils.isEmpty(prefix)) {
+            prefix = joinPoint.getTarget().getClass().getName();
+        }
+        EvaluationContext context = new StandardEvaluationContext();
+        Object[] args = joinPoint.getArgs();
+        String key;
+        if (args.length != 0) {
+            String gaussCacheKey = gaussCacheAnnotation.key();
+            String[] parameterNames = new DefaultParameterNameDiscoverer().getParameterNames(proxyMethod);
+            if (!ObjectUtils.isEmpty(gaussCacheKey)) {
+                Expression expression = new SpelExpressionParser().parseExpression(gaussCacheKey);
+                for (int i = 0; i < Objects.requireNonNull(parameterNames).length; i++) {
+                    context.setVariable(parameterNames[i],args[i]);
+                }
+                try {
+                    key = prefix + "::" + expression.getValue(context);
+                } catch (SpelEvaluationException e) {
+                    logger.error("GaussCache.key is not a springEL expression.....");
+                    key = "";
+                }
+            } else {
+                key = String.join(":", String.join("::", prefix, proxyMethod.getName()),
+                        String.join(":", Objects.requireNonNull(parameterNames)));
+            }
+        } else {
+            key = String.join("::", prefix, proxyMethod.getName());
+        }
+        if (!ObjectUtils.isEmpty(key) && local.containsKey(key)) {
+            logger.info("GaussCache: " + key + " is functional....");
+            return local.get(key);
+        }
+
+        result = joinPoint.proceed();
+        if (ObjectUtils.isEmpty(key)) {
+            return result;
+        }
+        local.put(key, result);
         return result;
     }
 }
