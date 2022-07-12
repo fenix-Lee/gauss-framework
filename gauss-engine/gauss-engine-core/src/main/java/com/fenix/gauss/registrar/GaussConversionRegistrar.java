@@ -64,7 +64,7 @@ public class GaussConversionRegistrar implements ImportBeanDefinitionRegistrar,
         AnnotationTypeFilter annotationTypeFilter = new AnnotationTypeFilter(GaussConvertor.class);
         scanner.addIncludeFilter(annotationTypeFilter);
         basePackages = getBasePackages(metadata);
-        basePackages.remove("com.fenix.gauss"); // filter default convertor to base packages
+        basePackages.remove("com.fenix.gauss"); // filter default convertor from base packages
         for (String basePackage : basePackages) {
             Set<BeanDefinition> candidateComponents = scanner
                     .findCandidateComponents(basePackage);

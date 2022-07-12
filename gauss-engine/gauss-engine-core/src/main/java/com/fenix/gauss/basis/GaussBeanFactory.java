@@ -27,7 +27,7 @@ import java.util.function.Consumer;
  * singleton by default if context is from Spring framework</b>
  *
  * @author Chang Su
- * @version 2.0
+ * @version 2.1
  * @see ApplicationContext
  * @see org.springframework.context.ApplicationContextAware
  * @since 4/3/2022

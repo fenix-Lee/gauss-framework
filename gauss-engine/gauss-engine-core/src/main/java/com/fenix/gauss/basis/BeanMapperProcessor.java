@@ -1,10 +1,13 @@
 package com.fenix.gauss.basis;
 
 import com.fenix.gauss.framework.*;
+import com.fenix.gauss.infrastructure.DefaultProcessor;
 import com.fenix.gauss.infrastructure.FieldEngine;
 import com.fenix.gauss.infrastructure.FieldMetaData;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import com.google.common.collect.Table;
+import com.google.common.collect.Tables;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.config.BeanPostProcessor;
 import org.springframework.core.annotation.AnnotationUtils;
@@ -75,7 +78,8 @@ public class BeanMapperProcessor implements BeanPostProcessor {
             return targetType;
         }
 
-        public Map<String, List<FieldMetaData<?>>> getFieldMetaData () {
+        @Override
+        public Map<String, List<FieldMetaData<?>>> getFieldAnnotatedMetaData() {
             return fieldMetaData;
         }
 
@@ -101,44 +105,39 @@ public class BeanMapperProcessor implements BeanPostProcessor {
         private void capFieldMaps(String key, Class<?> targetClazz,
                                   FieldMapping... fieldMappings) {
             Arrays.stream(fieldMappings)
-                    .forEach(f -> {
-                        if (f.scope().equals(targetClazz)) {
-                            buildFieldMetaData(key, f);
-                        }
-                    });
+                    .filter(f -> f.scope().equals(targetClazz))
+                    .forEach(f -> buildFieldMetaData(key, f));
         }
 
         private void buildFieldMetaData(String key, FieldMapping fieldMapping) {
             if (fieldMetaData.containsKey(key)) {
                 fieldMetaData.computeIfAbsent(key, k -> Lists.newArrayList());
                 fieldMetaData.get(key)
-                        .add(GaussFieldMetaData.create(key, fieldMapping.fieldNames(), fieldMapping.processor()));
+                        .add(GaussFieldAnnotatedMetaData.create(fieldMapping.fieldNames(), fieldMapping.processor()));
             } else {
                 fieldMetaData.put(key,
-                        Lists.newArrayList(GaussFieldMetaData
-                                .create(key, fieldMapping.fieldNames(), fieldMapping.processor())));
+                        Lists.newArrayList(GaussFieldAnnotatedMetaData
+                                .create(fieldMapping.fieldNames(), fieldMapping.processor())));
             }
         }
     }
 
-    private static class GaussFieldMetaData<T> implements FieldMetaData<T> {
-        private final String field;
+    private static class GaussFieldAnnotatedMetaData<T> implements FieldMetaData<T> {
+
         private final String[] targetFields;
+
         private final Class<T> processorType;
 
-        private GaussFieldMetaData(String field, String[] targetFields, Class<T> processorType) {
-            this.field = field;
+        private GaussFieldAnnotatedMetaData(String[] targetFields, Class<T> processorType) {
             this.targetFields = targetFields;
             this.processorType = processorType;
+            if (!processorType.equals(DefaultProcessor.class)) {
+                GaussBeanMapper.addProcessor(processorType);
+            }
         }
 
-        static<T> GaussFieldMetaData<T> create (String field, String[] targetFields, Class<T> processorType) {
-            return new GaussFieldMetaData<>(field, targetFields, processorType);
-        }
-
-        @Override
-        public String getField() {
-            return field;
+        static<T> GaussFieldAnnotatedMetaData<T> create (String[] targetFields, Class<T> processorType) {
+            return new GaussFieldAnnotatedMetaData<>(targetFields, processorType);
         }
 
         @Override

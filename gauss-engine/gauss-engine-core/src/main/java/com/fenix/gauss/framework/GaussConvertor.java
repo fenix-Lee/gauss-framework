@@ -3,6 +3,7 @@ package com.fenix.gauss.framework;
 import org.springframework.stereotype.Component;
 
 import java.lang.annotation.*;
+import java.util.UUID;
 
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)
