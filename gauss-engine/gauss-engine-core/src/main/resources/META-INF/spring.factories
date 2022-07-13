@@ -1,2 +1,2 @@
 org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
-com.fenix.gauss.GaussAutoConfiguration
+xyz.gaussframework.engine.GaussAutoConfiguration
