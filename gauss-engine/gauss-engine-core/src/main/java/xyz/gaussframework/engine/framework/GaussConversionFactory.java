@@ -10,8 +10,6 @@ class GaussConversionFactory implements FactoryBean<Object> {
 
     private String name;
 
-    private Set<String> tags;
-
     @Override
     public Object getObject() {
         return getTarget();
@@ -34,14 +32,6 @@ class GaussConversionFactory implements FactoryBean<Object> {
 
     public void setName(String name) {
         this.name = name;
-    }
-
-    public Set<String> getTags() {
-        return tags;
-    }
-
-    public void setTags(Set<String> tags) {
-        this.tags = tags;
     }
 
     public void setType(Class<?> type) {

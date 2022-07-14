@@ -17,6 +17,7 @@ import org.springframework.util.ObjectUtils;
 import xyz.gaussframework.engine.util.ClassValidator;
 
 import javax.annotation.PostConstruct;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -136,6 +137,6 @@ public class GaussBeanMapper {
     }
 
     static void addTag (Class<?> key, String tag) {
-
+        TAG_MAP.merge(key, new HashSet<String>(){{add(tag);}}, (t, u) -> {t.addAll(u);return t;});
     }
 }

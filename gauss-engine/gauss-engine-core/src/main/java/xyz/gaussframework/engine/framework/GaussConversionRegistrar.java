@@ -109,26 +109,6 @@ class GaussConversionRegistrar implements ImportBeanDefinitionRegistrar,
         BeanDefinitionReaderUtils.registerBeanDefinition(holder, registry);
     }
 
-//    private Object getTags(String className) {
-//        Class<?> convertorClass;
-//        try {
-//            convertorClass = ClassUtils.forName(className, ClassUtils.getDefaultClassLoader());
-//        } catch (ClassNotFoundException e) {
-//            return null;
-//        }
-//        if (ClassValidator.ClassTypeValidation(convertorClass,
-//                "ma.glasnost.orika.Converter")) {
-//            return new HashSet<String>(){{add(convertorClass.getName());}};
-//        }
-//        Field[] fields = convertorClass.getDeclaredFields();
-//        Assert.isTrue(!ObjectUtils.isEmpty(fields), "conversion function must be declared...");
-//        Set<String> tags = new HashSet<>(fields.length);
-//        Arrays.stream(fields)
-//                .filter(f -> f.isAnnotationPresent(GaussConvertor.Role.class))
-//                .forEach(f -> tags.add(f.getAnnotation(GaussConvertor.Role.class).tag()));
-//        return tags;
-//    }
-
     private String createName(AnnotationMetadata metadata, Map<String, Object> attributes) {
         if (ObjectUtils.isEmpty(attributes)) {
             return metadata.getClassName();

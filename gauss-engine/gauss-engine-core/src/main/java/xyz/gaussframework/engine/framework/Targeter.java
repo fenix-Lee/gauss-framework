@@ -1,13 +1,17 @@
 package xyz.gaussframework.engine.framework;
 
+import com.google.common.collect.Maps;
+import org.springframework.cglib.core.ReflectUtils;
 import org.springframework.util.Assert;
 import org.springframework.util.ClassUtils;
 import org.springframework.util.ObjectUtils;
+import org.springframework.util.ReflectionUtils;
 import xyz.gaussframework.engine.util.ClassValidator;
 
 import java.lang.reflect.Field;
 import java.util.Arrays;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 
 public interface Targeter {
@@ -23,27 +27,19 @@ public interface Targeter {
 
         private <T> T newInstance(Target<T> target) {
             // dynamic proxy
+            Map<String, GaussConversion<?,?>> fieldMetadata = readConversionMetaData(target.type());
             return null;
         }
 
-        private Set<String> getTags(String className) {
-            Class<?> convertorClass;
-            try {
-                convertorClass = ClassUtils.forName(className, ClassUtils.getDefaultClassLoader());
-            } catch (ClassNotFoundException e) {
-                return null;
-            }
-            if (ClassValidator.ClassTypeValidation(convertorClass,
-                    "ma.glasnost.orika.Converter")) {
-                return new HashSet<String>(){{add(convertorClass.getName());}};
-            }
+        private Map<String, GaussConversion<?,?>> readConversionMetaData(Class<?> convertorClass) {
             Field[] fields = convertorClass.getDeclaredFields();
             Assert.isTrue(!ObjectUtils.isEmpty(fields), "conversion function must be declared...");
-            Set<String> tags = new HashSet<>(fields.length);
+            Map<String, GaussConversion<?,?>> fieldMetadata = Maps.newHashMap();
             Arrays.stream(fields)
                     .filter(f -> f.isAnnotationPresent(GaussConvertor.Role.class))
-                    .forEach(f -> tags.add(f.getAnnotation(GaussConvertor.Role.class).tag()));
-            return tags;
+                    .forEach(f -> fieldMetadata.put(f.getAnnotation(GaussConvertor.Role.class).tag(),
+                            (GaussConversion<?, ?>) ReflectionUtils.getField(f, null)));
+            return fieldMetadata;
         }
     }
 }
