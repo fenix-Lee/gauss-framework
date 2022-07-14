@@ -137,9 +137,9 @@ public class BeanMapperProcessor implements BeanPostProcessor {
             this.targetFields = targetFields;
             this.processorType = processorType;
             this.tag = tag;
-//            if (!processorType.equals(DefaultProcessor.class)) {
-//                GaussBeanMapper.addProcessor(processorType);
-//            }
+            if (!processorType.equals(DefaultProcessor.class)) {
+                GaussBeanMapper.addTag(processorType, tag);
+            }
         }
 
         static<T> GaussFieldAnnotatedMetaData<T> create (String[] targetFields, Class<T> processorType, String tag) {

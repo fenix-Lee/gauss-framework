@@ -17,6 +17,14 @@ public class ClassValidator {
         }
     }
 
+    public static boolean ClassTypeValidation (Class<?> source, String assignableName) {
+        try {
+            return ClassTypeValidation(source, ClassUtils.forName(assignableName, ClassUtils.getDefaultClassLoader()));
+        } catch (ClassNotFoundException e) {
+            return false;
+        }
+    }
+
     public static boolean ClassTypeValidation (String sourceName, String assignableName) {
         try {
             return ClassTypeValidation(sourceName,
