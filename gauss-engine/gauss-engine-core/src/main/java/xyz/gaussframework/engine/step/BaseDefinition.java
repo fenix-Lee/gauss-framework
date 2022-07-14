@@ -1,8 +1,6 @@
 package xyz.gaussframework.engine.step;
 
 import xyz.gaussframework.engine.basis.GaussBeanFactory;
-import xyz.gaussframework.engine.infrastructure.Binomial;
-import xyz.gaussframework.engine.infrastructure.GaussDistribution;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
@@ -13,12 +11,12 @@ import org.junit.Assert;
 import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.util.ObjectUtils;
 import org.springframework.util.ReflectionUtils;
+import xyz.gaussframework.engine.infrastructure.Binomial;
+import xyz.gaussframework.engine.infrastructure.GaussDistribution;
 
 import java.lang.reflect.Field;
 import java.util.List;
 import java.util.Optional;
-
-import static org.junit.Assert.assertEquals;
 
 @CucumberContextConfiguration
 public class BaseDefinition {

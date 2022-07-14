@@ -1,11 +1,11 @@
 package xyz.gaussframework.engine.basis;
 
+import xyz.gaussframework.engine.framework.GaussConversion;
 import xyz.gaussframework.engine.infrastructure.DefaultProcessor;
 import xyz.gaussframework.engine.infrastructure.FieldEngine;
 import xyz.gaussframework.engine.infrastructure.FieldMetaData;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
-import ma.glasnost.orika.Converter;
 import ma.glasnost.orika.MapperFactory;
 import ma.glasnost.orika.converter.ConverterFactory;
 import ma.glasnost.orika.converter.builtin.CloneableConverter;
@@ -14,10 +14,12 @@ import ma.glasnost.orika.metadata.ClassMapBuilder;
 import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Component;
 import org.springframework.util.ObjectUtils;
+import xyz.gaussframework.engine.util.ClassValidator;
 
 import javax.annotation.PostConstruct;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * Not only does {@link GaussBeanMapper} copy all fields from one class to another, but does copy object same with
@@ -34,24 +36,38 @@ public class GaussBeanMapper {
             .useAutoMapping(true)
             .build();
 
-    private static final List<FieldEngine> fieldEngines = Lists.newCopyOnWriteArrayList();
+    private static final List<FieldEngine> FIELD_ENGINES = Lists.newCopyOnWriteArrayList();
 
-    private static final Map<String, Class<?>> processorMap = Maps.newConcurrentMap();
+    private static final Map<Class<?>, Set<String>> TAG_MAP = Maps.newConcurrentMap();
 
     @PostConstruct
     public void init() {
         ConverterFactory converterFactory = MAPPER_FACTORY.getConverterFactory();
         // register convertor
         converterFactory.registerConverter(new CloneableConverter(GaussBeanFactory.getCloneableClass()));
-        if (!ObjectUtils.isEmpty(processorMap)) {
-            processorMap.forEach((k,v) -> converterFactory
-                    .registerConverter(k, (Converter<?,?>)GaussBeanFactory.originalInstantiation(v)));
-        }
+        TAG_MAP.forEach((k, v) -> v.stream().filter(t -> !t.equals("default"))
+                .forEach(t -> registerGaussConvertor(k, t, converterFactory)));
         // register mapping
-        if (!fieldEngines.isEmpty()) {
-            fieldEngines.forEach(engine -> registerMetaData(engine.getSourceType(),
+        if (!FIELD_ENGINES.isEmpty()) {
+            FIELD_ENGINES.forEach(engine -> registerMetaData(engine.getSourceType(),
                     engine.getTargetType(), engine.getFieldAnnotatedMetaData()));
         }
+    }
+
+    private void registerGaussConvertor (Class<?> processorClass, String tag, ConverterFactory factory) {
+        TAG_MAP.get(processorClass).forEach(t -> {
+            if (ClassValidator.ClassTypeValidation(processorClass.getName(),
+                    "ma.glasnost.orika.Converter")) {
+                factory.registerConverter(tag,
+                        (ma.glasnost.orika.Converter<?,?>)GaussBeanFactory.getBean(processorClass));
+            }
+
+            if (ClassValidator.ClassTypeValidation(processorClass, GaussConversion.class)) {
+                factory.registerConverter(tag,
+                        ((xyz.gaussframework.engine.framework.GaussConversion<?,?>)GaussBeanFactory
+                                .getBean(processorClass)).getConverter(tag));
+            }
+        });
     }
 
     public static<S,D> void mapperRegister(Class<S> source,
@@ -100,7 +116,7 @@ public class GaussBeanMapper {
                 } else {
                     for (String targetField : metaData.getTargetFields()) {
                         classMapBuilder = classMapBuilder.fieldMap(entry.getKey(), targetField)
-                                .converter(metaData.getProcessorType().getName())
+                                .converter(metaData.tag())
                                 .add();
                     }
                 }
@@ -116,10 +132,10 @@ public class GaussBeanMapper {
     }
 
     static void addFieldEngine (FieldEngine fieldEngine) {
-        fieldEngines.add(fieldEngine);
+        FIELD_ENGINES.add(fieldEngine);
     }
 
-    static void addProcessor (Class<?> processorClass) {
-        processorMap.putIfAbsent(processorClass.getName(), processorClass);
+    static void addTag (Class<?> key, String tag) {
+
     }
 }

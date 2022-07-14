@@ -114,11 +114,13 @@ public class BeanMapperProcessor implements BeanPostProcessor {
             if (fieldMetaData.containsKey(key)) {
                 fieldMetaData.computeIfAbsent(key, k -> Lists.newArrayList());
                 fieldMetaData.get(key)
-                        .add(GaussFieldAnnotatedMetaData.create(fieldMapping.fieldNames(), fieldMapping.processor()));
+                        .add(GaussFieldAnnotatedMetaData.create(fieldMapping.fieldNames(),
+                                fieldMapping.processor(),
+                                fieldMapping.tag()));
             } else {
                 fieldMetaData.put(key,
                         Lists.newArrayList(GaussFieldAnnotatedMetaData
-                                .create(fieldMapping.fieldNames(), fieldMapping.processor())));
+                                .create(fieldMapping.fieldNames(), fieldMapping.processor(), fieldMapping.tag())));
             }
         }
     }
@@ -129,16 +131,19 @@ public class BeanMapperProcessor implements BeanPostProcessor {
 
         private final Class<T> processorType;
 
-        private GaussFieldAnnotatedMetaData(String[] targetFields, Class<T> processorType) {
+        private final String tag;
+
+        private GaussFieldAnnotatedMetaData(String[] targetFields, Class<T> processorType, String tag) {
             this.targetFields = targetFields;
             this.processorType = processorType;
-            if (!processorType.equals(DefaultProcessor.class)) {
-                GaussBeanMapper.addProcessor(processorType);
-            }
+            this.tag = tag;
+//            if (!processorType.equals(DefaultProcessor.class)) {
+//                GaussBeanMapper.addProcessor(processorType);
+//            }
         }
 
-        static<T> GaussFieldAnnotatedMetaData<T> create (String[] targetFields, Class<T> processorType) {
-            return new GaussFieldAnnotatedMetaData<>(targetFields, processorType);
+        static<T> GaussFieldAnnotatedMetaData<T> create (String[] targetFields, Class<T> processorType, String tag) {
+            return new GaussFieldAnnotatedMetaData<>(targetFields, processorType, tag);
         }
 
         @Override
@@ -149,6 +154,11 @@ public class BeanMapperProcessor implements BeanPostProcessor {
         @Override
         public Class<T> getProcessorType() {
             return processorType;
+        }
+
+        @Override
+        public String tag() {
+            return tag;
         }
     }
 }

@@ -1,5 +1,6 @@
 package xyz.gaussframework.engine.util;
 
+import org.springframework.util.ClassUtils;
 import xyz.gaussframework.engine.factory.GaussFactory;
 import org.springframework.util.ObjectUtils;
 
@@ -30,27 +31,6 @@ public class FactoryValidator {
             throw new RuntimeException(e);
         }
 
-        // check issue for more details
-        return Objects.requireNonNull(getAllSuperClasses(sourceClass)).stream()
-                .anyMatch(c -> c.getCanonicalName().equals(gaussFactoryClass.getCanonicalName()));
-    }
-
-    @SuppressWarnings("unchecked")
-    private static List<Class<?>> getAllSuperClasses(Class<?> clazz) {
-        if (ObjectUtils.isEmpty(clazz)) {
-            return Collections.EMPTY_LIST;
-        }
-
-        List<Class<?>> allSuperClasses = new ArrayList<>();
-        Class<?> current = clazz;
-        while (true) {
-            Class<?> superClass = current.getSuperclass();
-            if (ObjectUtils.isEmpty(superClass)) {
-                break;
-            }
-            allSuperClasses.add(superClass);
-            current = superClass;
-        }
-        return allSuperClasses;
+        return ClassValidator.ClassTypeValidation(sourceClass, gaussFactoryClass);
     }
 }
