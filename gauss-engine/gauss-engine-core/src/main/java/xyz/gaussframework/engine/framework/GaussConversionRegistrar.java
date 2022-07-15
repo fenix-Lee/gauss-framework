@@ -72,8 +72,8 @@ class GaussConversionRegistrar implements ImportBeanDefinitionRegistrar,
                     AnnotationMetadata annotationMetadata = beanDefinition.getMetadata();
                     validateMetadata(annotationMetadata); // check convertor type
                     Map<String, Object> attributes = metadata
-                            .getAnnotationAttributes(GaussConvertor.class.getCanonicalName());
-                    registerGaussConvertor(registry, annotationMetadata, Objects.requireNonNull(attributes));
+                            .getAnnotationAttributes(GaussConvertor.class.getName());
+                    registerGaussConvertor(registry, annotationMetadata, attributes);
                 }
             }
         }

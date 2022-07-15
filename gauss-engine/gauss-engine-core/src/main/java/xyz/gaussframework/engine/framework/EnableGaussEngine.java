@@ -12,7 +12,7 @@ import java.lang.annotation.RetentionPolicy;
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
-@Import(GaussConversionRegistrar.class)
+@Import({GaussConversionRegistrar.class, GaussMapperImportSelector.class})
 public @interface EnableGaussEngine {
     /**
      * Alias for the {@link #basePackages()} attribute. Allows for more concise annotation

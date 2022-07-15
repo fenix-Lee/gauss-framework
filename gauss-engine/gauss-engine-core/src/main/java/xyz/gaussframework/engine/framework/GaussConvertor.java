@@ -24,7 +24,7 @@ public @interface GaussConvertor {
      */
     String name() default "";
 
-    @Target({ElementType.FIELD, ElementType.METHOD})
+    @Target(ElementType.FIELD)
     @Retention(RetentionPolicy.RUNTIME)
     @interface Role {
         String tag();
