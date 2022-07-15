@@ -16,6 +16,12 @@ interface Targeter {
 
     <T> T target(Target<T> target);
 
+    @SuppressWarnings("unchecked")
+    default <T> T getProxyInstance(Target<T> target, InvocationHandler handler) {
+        return (T) Proxy.newProxyInstance(ClassUtils.getDefaultClassLoader(),
+                new Class[]{target.type()}, handler);
+    }
+
     class GaussTargeter implements Targeter {
 
         private final InvocationHandlerFactory factory = new InvocationHandlerFactory.GaussDefaultHandlerFactory();
@@ -25,12 +31,10 @@ interface Targeter {
             return newInstance(target);
         }
 
-        @SuppressWarnings("unchecked")
         private <T> T newInstance(Target<T> target) {
             Map<String, GaussConversion<Object,Object>> fieldMetadata = readConversionMetaData(target.type());
             InvocationHandler handler = factory.create(target, fieldMetadata);
-            return (T) Proxy.newProxyInstance(ClassUtils.getDefaultClassLoader(),
-                    new Class[]{target.type()}, handler);
+            return getProxyInstance(target, handler);
         }
 
         @SuppressWarnings("unchecked")
@@ -55,12 +59,10 @@ interface Targeter {
             return getCustomConvertorProxy(target);
         }
 
-        @SuppressWarnings("unchecked")
         private <T> T getCustomConvertorProxy(Target<T> target) {
             InvocationHandler handler = ((InvocationHandlerFactory.GaussDefaultHandlerFactory)factory)
                     .create(target);
-            return (T) Proxy.newProxyInstance(ClassUtils.getDefaultClassLoader(),
-                    new Class[]{target.type()}, handler);
+            return getProxyInstance(target, handler);
         }
     }
 }

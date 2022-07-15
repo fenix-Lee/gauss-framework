@@ -15,7 +15,7 @@ public interface InvocationHandlerFactory {
         }
 
         public InvocationHandler create(Target<?> target) {
-            return new GaussConversionInvocationHandler<>(target);
+            return new GaussConversionInvocationHandler(target);
         }
     }
 }

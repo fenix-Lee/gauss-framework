@@ -18,7 +18,6 @@ import java.lang.annotation.Repeatable;
 @Target(ElementType.FIELD)
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
-@Component
 @Repeatable(Mappings.class)
 public @interface FieldMapping {
 

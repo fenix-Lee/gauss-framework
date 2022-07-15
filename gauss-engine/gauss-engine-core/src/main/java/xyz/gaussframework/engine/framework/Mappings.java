@@ -19,7 +19,6 @@ import java.lang.annotation.RetentionPolicy;
 @Target({ElementType.FIELD})
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
-@Component
 public @interface Mappings {
 
     /**

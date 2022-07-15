@@ -16,7 +16,6 @@ import java.lang.annotation.RetentionPolicy;
  */
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)
-@Component
 @Documented
 public @interface OverrideClone {
 

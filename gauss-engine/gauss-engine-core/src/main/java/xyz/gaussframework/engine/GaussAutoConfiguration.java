@@ -1,14 +1,13 @@
 package xyz.gaussframework.engine;
 
+import org.springframework.context.annotation.*;
+import xyz.gaussframework.engine.framework.GaussMapperImportSelector;
 import xyz.gaussframework.engine.infrastructure.aspect.GaussCacheAspect;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.ComponentScan;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.EnableAspectJAutoProxy;
 
 @Configuration
 @ComponentScan
 @EnableAspectJAutoProxy
+@Import(GaussMapperImportSelector.class)
 public class GaussAutoConfiguration {
 
     @Bean

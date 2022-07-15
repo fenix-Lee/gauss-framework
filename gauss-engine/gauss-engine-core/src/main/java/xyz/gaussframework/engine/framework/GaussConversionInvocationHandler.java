@@ -7,7 +7,7 @@ import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 
-class GaussConversionInvocationHandler<S,D> implements InvocationHandler {
+class GaussConversionInvocationHandler implements InvocationHandler {
 
     private final Target<?> target;
 
@@ -23,11 +23,11 @@ class GaussConversionInvocationHandler<S,D> implements InvocationHandler {
             case "canConvert":
                 return true;
             case "convert":
-                Assert.isTrue(args.length >= 2, "args is invalid.....");
+                Assert.isTrue(args.length >= 2, "parameters are invalid.....");
                 if (target instanceof GaussConversionTarget) {
                     return ((GaussConversionTarget<ma.glasnost.orika.Converter<Object,Object>>) target)
                             .getConversion()
-                            .convert(args[0], (Type<D>) args[1]);
+                            .convert(args[0], (Type<Object>) args[1]);
                 }
                 return null;
             case "setMapperFacade":

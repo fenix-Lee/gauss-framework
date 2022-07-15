@@ -18,6 +18,7 @@ import org.springframework.core.type.filter.AnnotationTypeFilter;
 import org.springframework.lang.NonNull;
 import org.springframework.util.*;
 import xyz.gaussframework.engine.util.GaussClassTypeUtil;
+import xyz.gaussframework.engine.util.GaussUtil;
 
 import java.util.*;
 
@@ -52,7 +53,7 @@ class GaussConversionRegistrar implements ImportBeanDefinitionRegistrar,
     }
 
     private void registerGaussConvertors(AnnotationMetadata metadata, BeanDefinitionRegistry registry) {
-        ClassPathScanningCandidateComponentProvider scanner = getScanner();
+        ClassPathScanningCandidateComponentProvider scanner = GaussUtil.getScanner(this.environment);
         scanner.setResourceLoader(this.resourceLoader);
 
         Set<String> basePackages;
