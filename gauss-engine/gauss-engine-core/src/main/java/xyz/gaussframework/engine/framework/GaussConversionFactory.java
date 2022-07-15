@@ -2,8 +2,6 @@ package xyz.gaussframework.engine.framework;
 
 import org.springframework.beans.factory.FactoryBean;
 
-import java.util.Set;
-
 class GaussConversionFactory implements FactoryBean<Object> {
 
     private Class<?> type;

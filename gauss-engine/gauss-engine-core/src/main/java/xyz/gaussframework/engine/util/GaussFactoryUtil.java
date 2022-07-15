@@ -1,13 +1,7 @@
 package xyz.gaussframework.engine.util;
 
-import org.springframework.util.ClassUtils;
 import xyz.gaussframework.engine.factory.GaussFactory;
 import org.springframework.util.ObjectUtils;
-
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Objects;
 
 /**
  *
@@ -15,7 +9,7 @@ import java.util.Objects;
  * @version 1.0
  * @since 19/05/2022
  */
-public class FactoryValidator {
+public class GaussFactoryUtil {
 
     @SuppressWarnings("unchecked")
     public static boolean checkIfFactory(Class<?> sourceClass) {
@@ -31,6 +25,6 @@ public class FactoryValidator {
             throw new RuntimeException(e);
         }
 
-        return ClassValidator.ClassTypeValidation(sourceClass, gaussFactoryClass);
+        return GaussClassTypeUtil.classTypeMatch(sourceClass, gaussFactoryClass);
     }
 }

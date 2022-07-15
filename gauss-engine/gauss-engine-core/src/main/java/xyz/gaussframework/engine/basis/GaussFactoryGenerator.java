@@ -2,7 +2,7 @@ package xyz.gaussframework.engine.basis;
 
 import xyz.gaussframework.engine.factory.Creator;
 import xyz.gaussframework.engine.factory.GaussFactory;
-import xyz.gaussframework.engine.util.FactoryValidator;
+import xyz.gaussframework.engine.util.GaussFactoryUtil;
 import org.springframework.core.annotation.AnnotationUtils;
 import org.springframework.util.Assert;
 
@@ -18,7 +18,7 @@ public enum GaussFactoryGenerator {
     INSTANCE;
 
     public <T> T getFactory(Class<T> clazz) {
-        if (!FactoryValidator.checkIfFactory(clazz)) {
+        if (!GaussFactoryUtil.checkIfFactory(clazz)) {
             throw new IllegalArgumentException(" cannot create non-factory class in factory generator");
         }
 

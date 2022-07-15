@@ -1,6 +1,7 @@
 package xyz.gaussframework.engine.basis;
 
 import xyz.gaussframework.engine.framework.GaussConversion;
+import xyz.gaussframework.engine.framework.GaussCustomConvertor;
 import xyz.gaussframework.engine.infrastructure.DefaultProcessor;
 import xyz.gaussframework.engine.infrastructure.FieldEngine;
 import xyz.gaussframework.engine.infrastructure.FieldMetaData;
@@ -14,7 +15,7 @@ import ma.glasnost.orika.metadata.ClassMapBuilder;
 import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Component;
 import org.springframework.util.ObjectUtils;
-import xyz.gaussframework.engine.util.ClassValidator;
+import xyz.gaussframework.engine.util.GaussClassTypeUtil;
 
 import javax.annotation.PostConstruct;
 import java.util.HashSet;
@@ -57,16 +58,15 @@ public class GaussBeanMapper {
 
     private void registerGaussConvertor (Class<?> processorClass, String tag, ConverterFactory factory) {
         TAG_MAP.get(processorClass).forEach(t -> {
-            if (ClassValidator.ClassTypeValidation(processorClass.getName(),
-                    "ma.glasnost.orika.Converter")) {
+            if (GaussClassTypeUtil.isMatchInnerConvertor(processorClass)) {
                 factory.registerConverter(tag,
                         (ma.glasnost.orika.Converter<?,?>)GaussBeanFactory.getBean(processorClass));
             }
 
-            if (ClassValidator.ClassTypeValidation(processorClass, GaussConversion.class)) {
+            if (GaussClassTypeUtil.classTypeMatch(processorClass, GaussCustomConvertor.class)) {
                 factory.registerConverter(tag,
-                        ((xyz.gaussframework.engine.framework.GaussConversion<?,?>)GaussBeanFactory
-                                .getBean(processorClass)).getConverter(tag));
+                        ((xyz.gaussframework.engine.framework.GaussCustomConvertor)GaussBeanFactory
+                                .getBean(processorClass)).getConvertor(tag));
             }
         });
     }

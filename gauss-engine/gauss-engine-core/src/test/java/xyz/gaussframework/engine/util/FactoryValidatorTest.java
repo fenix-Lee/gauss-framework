@@ -10,7 +10,7 @@ public class FactoryValidatorTest {
 
     @Test
     public void factoryValidationTest() {
-        boolean flag = FactoryValidator.checkIfFactory(MultiLayersFactory.class);
+        boolean flag = GaussFactoryUtil.checkIfFactory(MultiLayersFactory.class);
         Assert.assertTrue(flag);
     }
 }

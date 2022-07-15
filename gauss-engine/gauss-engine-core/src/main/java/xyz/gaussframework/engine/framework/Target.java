@@ -1,6 +1,7 @@
 package xyz.gaussframework.engine.framework;
 
-public interface Target<T> {
+
+interface Target<T> {
 
     Class<T> type();
 

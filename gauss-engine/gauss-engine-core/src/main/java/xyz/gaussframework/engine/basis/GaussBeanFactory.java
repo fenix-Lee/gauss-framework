@@ -2,7 +2,7 @@ package xyz.gaussframework.engine.basis;
 
 import xyz.gaussframework.engine.infrastructure.aspect.GaussCacheAspect;
 import com.google.common.collect.Maps;
-import xyz.gaussframework.engine.util.FactoryValidator;
+import xyz.gaussframework.engine.util.GaussFactoryUtil;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.BeanUtils;
@@ -52,7 +52,7 @@ public class GaussBeanFactory implements ApplicationContextAware {
      */
     @SuppressWarnings("unused")
     public static <T> T getBean(Class<T> clazz) {
-        if (FactoryValidator.checkIfFactory(clazz)) {
+        if (GaussFactoryUtil.checkIfFactory(clazz)) {
             return GaussFactoryGenerator.INSTANCE.getFactory(clazz);
         }
         if (isReady()) {
@@ -79,7 +79,7 @@ public class GaussBeanFactory implements ApplicationContextAware {
         if (ObjectUtils.isEmpty(obj)) {
             return null;
         }
-        if (FactoryValidator.checkIfFactory(obj.getClass())) {
+        if (GaussFactoryUtil.checkIfFactory(obj.getClass())) {
             return GaussFactoryGenerator.INSTANCE.getFactory(obj.getClass());
         }
         return obj;
@@ -90,7 +90,7 @@ public class GaussBeanFactory implements ApplicationContextAware {
     }
 
     public static <T> T create(Class<T> clazz) {
-        if (FactoryValidator.checkIfFactory(clazz)) {
+        if (GaussFactoryUtil.checkIfFactory(clazz)) {
             return GaussFactoryGenerator.INSTANCE.getFactory(clazz);
         }
         try {
@@ -110,7 +110,7 @@ public class GaussBeanFactory implements ApplicationContextAware {
      */
     @SuppressWarnings({"unchecked","unused"})
     public static <T> T create(Class<T> clazz, Object...args) {
-        if (FactoryValidator.checkIfFactory(clazz)) {
+        if (GaussFactoryUtil.checkIfFactory(clazz)) {
             return GaussFactoryGenerator.INSTANCE.getFactory(clazz);
         }
         Constructor<T>[] ctors = (Constructor<T>[]) clazz.getDeclaredConstructors();
@@ -131,7 +131,7 @@ public class GaussBeanFactory implements ApplicationContextAware {
     @SuppressWarnings("unused")
     public static <T> T create(Constructor<T> ctor, Object...args) {
         Class<T> clazz = ctor.getDeclaringClass();
-        if (FactoryValidator.checkIfFactory(clazz)) {
+        if (GaussFactoryUtil.checkIfFactory(clazz)) {
             return GaussFactoryGenerator.INSTANCE.getFactory(clazz);
         }
         return copyObject(createObjectWithCtor(ctor, args));

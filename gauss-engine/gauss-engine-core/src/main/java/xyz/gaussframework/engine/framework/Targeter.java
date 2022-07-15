@@ -1,45 +1,66 @@
 package xyz.gaussframework.engine.framework;
 
 import com.google.common.collect.Maps;
-import org.springframework.cglib.core.ReflectUtils;
 import org.springframework.util.Assert;
 import org.springframework.util.ClassUtils;
 import org.springframework.util.ObjectUtils;
 import org.springframework.util.ReflectionUtils;
-import xyz.gaussframework.engine.util.ClassValidator;
 
 import java.lang.reflect.Field;
+import java.lang.reflect.InvocationHandler;
+import java.lang.reflect.Proxy;
 import java.util.Arrays;
-import java.util.HashSet;
 import java.util.Map;
-import java.util.Set;
 
-public interface Targeter {
+interface Targeter {
 
     <T> T target(Target<T> target);
 
     class GaussTargeter implements Targeter {
+
+        private final InvocationHandlerFactory factory = new InvocationHandlerFactory.GaussDefaultHandlerFactory();
 
         @Override
         public <T> T target(Target<T> target) {
             return newInstance(target);
         }
 
+        @SuppressWarnings("unchecked")
         private <T> T newInstance(Target<T> target) {
-            // dynamic proxy
-            Map<String, GaussConversion<?,?>> fieldMetadata = readConversionMetaData(target.type());
-            return null;
+            Map<String, GaussConversion<Object,Object>> fieldMetadata = readConversionMetaData(target.type());
+            InvocationHandler handler = factory.create(target, fieldMetadata);
+            return (T) Proxy.newProxyInstance(ClassUtils.getDefaultClassLoader(),
+                    new Class[]{target.type()}, handler);
         }
 
-        private Map<String, GaussConversion<?,?>> readConversionMetaData(Class<?> convertorClass) {
+        @SuppressWarnings("unchecked")
+        private Map<String, GaussConversion<Object,Object>> readConversionMetaData(Class<?> convertorClass) {
             Field[] fields = convertorClass.getDeclaredFields();
             Assert.isTrue(!ObjectUtils.isEmpty(fields), "conversion function must be declared...");
-            Map<String, GaussConversion<?,?>> fieldMetadata = Maps.newHashMap();
+            Map<String, GaussConversion<Object,Object>> fieldMetadata = Maps.newHashMap();
             Arrays.stream(fields)
                     .filter(f -> f.isAnnotationPresent(GaussConvertor.Role.class))
                     .forEach(f -> fieldMetadata.put(f.getAnnotation(GaussConvertor.Role.class).tag(),
-                            (GaussConversion<?, ?>) ReflectionUtils.getField(f, null)));
+                            (GaussConversion<Object, Object>) ReflectionUtils.getField(f, null)));
             return fieldMetadata;
+        }
+    }
+
+    class GaussConversionTargeter implements Targeter {
+
+        private final InvocationHandlerFactory factory = new InvocationHandlerFactory.GaussDefaultHandlerFactory();
+
+        @Override
+        public <T> T target(Target<T> target) {
+            return getCustomConvertorProxy(target);
+        }
+
+        @SuppressWarnings("unchecked")
+        private <T> T getCustomConvertorProxy(Target<T> target) {
+            InvocationHandler handler = ((InvocationHandlerFactory.GaussDefaultHandlerFactory)factory)
+                    .create(target);
+            return (T) Proxy.newProxyInstance(ClassUtils.getDefaultClassLoader(),
+                    new Class[]{target.type()}, handler);
         }
     }
 }

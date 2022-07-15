@@ -11,17 +11,14 @@ import org.springframework.context.EnvironmentAware;
 import org.springframework.context.ResourceLoaderAware;
 import org.springframework.context.annotation.ClassPathScanningCandidateComponentProvider;
 import org.springframework.context.annotation.ImportBeanDefinitionRegistrar;
-import org.springframework.core.annotation.AnnotationUtils;
 import org.springframework.core.env.Environment;
 import org.springframework.core.io.ResourceLoader;
 import org.springframework.core.type.AnnotationMetadata;
 import org.springframework.core.type.filter.AnnotationTypeFilter;
 import org.springframework.lang.NonNull;
 import org.springframework.util.*;
-import xyz.gaussframework.engine.basis.GaussBeanMapper;
-import xyz.gaussframework.engine.util.ClassValidator;
+import xyz.gaussframework.engine.util.GaussClassTypeUtil;
 
-import java.lang.reflect.Field;
 import java.util.*;
 
 /**
@@ -65,29 +62,31 @@ class GaussConversionRegistrar implements ImportBeanDefinitionRegistrar,
         AnnotationTypeFilter annotationTypeFilter = new AnnotationTypeFilter(GaussConvertor.class);
         scanner.addIncludeFilter(annotationTypeFilter);
         basePackages = getBasePackages(metadata, attrs);
-        basePackages.remove("com.fenix.gauss"); // filter default convertor from base packages
+        basePackages.remove("xyz.gaussframework.engine"); // filter default convertor from base packages
         for (String basePackage : basePackages) {
             Set<BeanDefinition> candidateComponents = scanner.findCandidateComponents(basePackage);
             for (BeanDefinition candidateComponent : candidateComponents) {
                 if (candidateComponent instanceof AnnotatedBeanDefinition) {
                     AnnotatedBeanDefinition beanDefinition = (AnnotatedBeanDefinition) candidateComponent;
                     AnnotationMetadata annotationMetadata = beanDefinition.getMetadata();
-                    if (annotationMetadata.isConcrete()) {
-                        // check super classes if any with 'ma.glasnost.orika.CustomConverter'
-                        if (!checkConcreteConversion(annotationMetadata)) {
-                            Assert.isTrue(annotationMetadata.isInterface(),
-                                    "@GaussConvertor should be specified on an interface");
-                        }
-                    } else {
-                        Assert.isTrue(annotationMetadata.isInterface(),
-                                "@GaussConvertor should be specified on an interface");
-                    }
-
+                    validateMetadata(annotationMetadata); // check convertor type
                     Map<String, Object> attributes = metadata
                             .getAnnotationAttributes(GaussConvertor.class.getCanonicalName());
                     registerGaussConvertor(registry, annotationMetadata, attributes);
                 }
             }
+        }
+    }
+
+    private void validateMetadata(AnnotationMetadata annotationMetadata) {
+        if (annotationMetadata.isConcrete()) {
+            if (!checkConcreteConversion(annotationMetadata)) {
+                Assert.isTrue(annotationMetadata.isInterface(),
+                        "@GaussConvertor should be specified on an interface");
+            }
+        } else {
+            Assert.isTrue(annotationMetadata.isInterface(),
+                    "@GaussConvertor should be specified on an interface");
         }
     }
 
@@ -98,13 +97,12 @@ class GaussConversionRegistrar implements ImportBeanDefinitionRegistrar,
         BeanDefinitionBuilder definition = BeanDefinitionBuilder
                 .genericBeanDefinition(GaussConversionFactory.class);
 
-        definition.addPropertyValue("name", name);
         definition.addPropertyValue("type", className);
-//        definition.addPropertyValue("tags", getTags(className));
+        definition.addPropertyValue("name", name);
 
+        definition.setPrimary(true);
         AbstractBeanDefinition beanDefinition = definition.getBeanDefinition();
-        BeanDefinitionHolder holder = new BeanDefinitionHolder(beanDefinition, className,
-                new String[] {});
+        BeanDefinitionHolder holder = new BeanDefinitionHolder(beanDefinition, className, new String[] {name});
 
         BeanDefinitionReaderUtils.registerBeanDefinition(holder, registry);
     }
@@ -161,8 +159,7 @@ class GaussConversionRegistrar implements ImportBeanDefinitionRegistrar,
     }
 
     private boolean checkConcreteConversion(AnnotationMetadata metadata) {
-        return ClassValidator.ClassTypeValidation(metadata.getClassName(),
-                "ma.glasnost.orika.Converter");
+        return GaussClassTypeUtil.isMatchInnerConvertor(metadata.getClassName());
     }
 
     private String resolve(String value) {
