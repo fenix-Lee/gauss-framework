@@ -1,7 +1,6 @@
 package xyz.gaussframework.engine.framework;
 
 import xyz.gaussframework.engine.infrastructure.DefaultProcessor;
-import org.springframework.stereotype.Component;
 
 import java.lang.annotation.Target;
 import java.lang.annotation.Documented;

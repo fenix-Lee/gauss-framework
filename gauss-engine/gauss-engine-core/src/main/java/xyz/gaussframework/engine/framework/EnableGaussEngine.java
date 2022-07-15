@@ -32,6 +32,7 @@ public @interface EnableGaussEngine {
      *
      * @return the array of 'basePackages'.
      */
+    @SuppressWarnings("unused")
     String[] basePackages() default {};
 
     /**
@@ -43,5 +44,6 @@ public @interface EnableGaussEngine {
      *
      * @return the array of 'basePackageClasses'.
      */
+    @SuppressWarnings("unused")
     Class<?>[] basePackageClasses() default {};
 }

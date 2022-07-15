@@ -1,5 +1,7 @@
 package xyz.gaussframework.engine.framework;
 
+import org.springframework.lang.NonNull;
+
 import java.util.List;
 import java.util.function.Function;
 
@@ -22,7 +24,9 @@ public interface DomainFactory<T, R> {
      * @return list of chain
      */
     @SuppressWarnings("unused")
-    default List<R> produce(Function<? super T, ? extends R> mapper) {return null;}
+    default List<R> produce(@NonNull Function<? super T, ? extends R> mapper) {
+        throw new RuntimeException();
+    }
 
     /**
      *
@@ -31,5 +35,7 @@ public interface DomainFactory<T, R> {
      * @return R type bean
      */
     @SuppressWarnings("unused")
-    default R manufacture(Function<List<T>, ? extends R> mapper) { return null;}
+    default R manufacture(@NonNull Function<List<T>, ? extends R> mapper) {
+        throw new RuntimeException();
+    }
 }

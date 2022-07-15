@@ -11,6 +11,8 @@ class GaussInvocationHandler implements InvocationHandler {
 
     private final Map<String, GaussConversion<Object,Object>> dispatch;
 
+    private static final Object EMPTY = new Object();
+
     public GaussInvocationHandler(Target<?> target, Map<String, GaussConversion<Object,Object>> dispatch) {
         this.target = target;
         this.dispatch = dispatch;
@@ -39,6 +41,6 @@ class GaussInvocationHandler implements InvocationHandler {
                             String.join("#","customConvertor",target.name()),
                             dispatch.get(String.valueOf(args[0]))));
         }
-        return null;
+        return EMPTY;
     }
 }

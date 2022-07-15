@@ -11,6 +11,8 @@ class GaussConversionInvocationHandler implements InvocationHandler {
 
     private final Target<?> target;
 
+    private static final Object EMPTY = new Object();
+
     public GaussConversionInvocationHandler (Target<?> target) {
         this.target = target;
     }
@@ -29,9 +31,9 @@ class GaussConversionInvocationHandler implements InvocationHandler {
                             .getConversion()
                             .convert(args[0], (Type<Object>) args[1]);
                 }
-                return null;
+                return EMPTY;
             case "setMapperFacade":
-                return null;
+                return EMPTY;
             case "equals":
                 try {
                     Object otherHandler =
@@ -45,6 +47,6 @@ class GaussConversionInvocationHandler implements InvocationHandler {
             case "toString":
                 return toString();
         }
-        return null;
+        return EMPTY;
     }
 }

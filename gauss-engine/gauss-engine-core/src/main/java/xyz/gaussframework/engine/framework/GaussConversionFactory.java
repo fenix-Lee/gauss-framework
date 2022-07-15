@@ -28,6 +28,7 @@ class GaussConversionFactory implements FactoryBean<Object> {
         return name;
     }
 
+    @SuppressWarnings("unused")
     public void setName(String name) {
         this.name = name;
     }

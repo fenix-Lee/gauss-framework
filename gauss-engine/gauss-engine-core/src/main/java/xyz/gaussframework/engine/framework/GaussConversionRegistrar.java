@@ -62,7 +62,7 @@ class GaussConversionRegistrar implements ImportBeanDefinitionRegistrar,
                 .getAnnotationAttributes(EnableGaussEngine.class.getName());
         AnnotationTypeFilter annotationTypeFilter = new AnnotationTypeFilter(GaussConvertor.class);
         scanner.addIncludeFilter(annotationTypeFilter);
-        basePackages = getBasePackages(metadata, attrs);
+        basePackages = getBasePackages(metadata, Objects.requireNonNull(attrs));
         basePackages.remove("xyz.gaussframework.engine"); // filter default convertor from base packages
         for (String basePackage : basePackages) {
             Set<BeanDefinition> candidateComponents = scanner.findCandidateComponents(basePackage);
@@ -73,7 +73,7 @@ class GaussConversionRegistrar implements ImportBeanDefinitionRegistrar,
                     validateMetadata(annotationMetadata); // check convertor type
                     Map<String, Object> attributes = metadata
                             .getAnnotationAttributes(GaussConvertor.class.getCanonicalName());
-                    registerGaussConvertor(registry, annotationMetadata, attributes);
+                    registerGaussConvertor(registry, annotationMetadata, Objects.requireNonNull(attributes));
                 }
             }
         }
@@ -118,21 +118,6 @@ class GaussConversionRegistrar implements ImportBeanDefinitionRegistrar,
             return metadata.getClassName();
         }
         return resolve(value);
-    }
-
-    protected ClassPathScanningCandidateComponentProvider getScanner() {
-        return new ClassPathScanningCandidateComponentProvider(false, this.environment) {
-            @Override
-            protected boolean isCandidateComponent(@NonNull AnnotatedBeanDefinition beanDefinition) {
-                boolean isCandidate = false;
-                if (beanDefinition.getMetadata().isIndependent()) {
-                    if (!beanDefinition.getMetadata().isAnnotation()) {
-                        isCandidate = true;
-                    }
-                }
-                return isCandidate;
-            }
-        };
     }
 
     protected Set<String> getBasePackages(AnnotationMetadata importingClassMetadata,

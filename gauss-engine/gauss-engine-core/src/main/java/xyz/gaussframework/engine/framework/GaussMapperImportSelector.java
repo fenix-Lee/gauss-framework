@@ -1,6 +1,6 @@
 package xyz.gaussframework.engine.framework;
 
-import org.springframework.beans.factory.annotation.AnnotatedBeanDefinition;
+import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.EnvironmentAware;
 import org.springframework.context.ResourceLoaderAware;
 import org.springframework.context.annotation.ClassPathScanningCandidateComponentProvider;
@@ -13,9 +13,10 @@ import org.springframework.lang.NonNull;
 import org.springframework.util.ClassUtils;
 import xyz.gaussframework.engine.util.GaussUtil;
 
+import java.lang.annotation.Annotation;
 import java.util.HashSet;
-import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 public class GaussMapperImportSelector implements ImportSelector,
         ResourceLoaderAware, EnvironmentAware {
@@ -25,20 +26,41 @@ public class GaussMapperImportSelector implements ImportSelector,
     private Environment environment;
 
     @Override
-    public String[] selectImports(AnnotationMetadata importingClassMetadata) {
+    public String[] selectImports(@NonNull AnnotationMetadata importingClassMetadata) {
+        Set<String> classNames = scanMapper(importingClassMetadata);
+        classNames.addAll(scanOverrideClone(importingClassMetadata));
+        return classNames.toArray(new String[0]);
+    }
+
+    private Set<String> scanMapper (AnnotationMetadata metadata) {
+        return scanWithAnnotation(metadata, Mapper.class);
+    }
+
+    private Set<String> scanOverrideClone (AnnotationMetadata metadata) {
+        return scanWithAnnotation(metadata, OverrideClone.class);
+    }
+
+    private Set<String> scanWithAnnotation (AnnotationMetadata metadata, Class<? extends Annotation> annotationClass) {
         ClassPathScanningCandidateComponentProvider scanner = GaussUtil.getScanner(environment);
+        scanner.setResourceLoader(this.resourceLoader);
+        scanner.addIncludeFilter(new AnnotationTypeFilter(annotationClass));
         Set<String> basePackages = new HashSet<>();
-        basePackages.add(ClassUtils.getPackageName(importingClassMetadata.getClassName()));
-        return new String[0];
+        basePackages.add(ClassUtils.getPackageName(metadata.getClassName()));
+        Set<String> candidateComponentsClassNames = new HashSet<>();
+        for (String basePackage : basePackages) {
+            candidateComponentsClassNames.addAll(scanner.findCandidateComponents(basePackage)
+                    .stream().map(BeanDefinition::getBeanClassName).collect(Collectors.toSet()));
+        }
+        return candidateComponentsClassNames;
     }
 
     @Override
-    public void setResourceLoader(ResourceLoader resourceLoader) {
+    public void setResourceLoader(@NonNull ResourceLoader resourceLoader) {
         this.resourceLoader = resourceLoader;
     }
 
     @Override
-    public void setEnvironment(Environment environment) {
+    public void setEnvironment(@NonNull Environment environment) {
         this.environment = environment;
     }
 }

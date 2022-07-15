@@ -1,7 +1,5 @@
 package xyz.gaussframework.engine.framework;
 
-import org.springframework.stereotype.Component;
-
 import java.lang.annotation.Target;
 import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;
