@@ -1,3 +1,0 @@
-1 static factory method
-2 enum extends
-3 issue
