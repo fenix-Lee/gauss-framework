@@ -1,7 +1,7 @@
 # Gauss Framework
 Gauss Engine is a framework designed for Spring-Boot based Java project development that includes bean-copy with custom convertor for specific field, bean-achieve and design-pattern adoption.
 
-## Adding Gauss to your build.
+## Adding Gauss to your build
 To add a depedency using Maven, use the following:
 ```xml
 <dependency>
@@ -11,4 +11,4 @@ To add a depedency using Maven, use the following:
 </dependency>
 ```
 ## Learn about Gauss
-- Our user guid [Gauss User Guide](https://github.com/fenix-Lee/gauss-framework/wiki)
+- Our user guide [Gauss User Guide](https://github.com/fenix-Lee/gauss-framework/wiki)
