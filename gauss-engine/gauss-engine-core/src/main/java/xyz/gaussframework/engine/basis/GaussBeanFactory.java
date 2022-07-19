@@ -11,7 +11,6 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.ApplicationContextException;
 import org.springframework.lang.NonNull;
-import org.springframework.stereotype.Component;
 import org.springframework.util.ObjectUtils;
 
 import java.lang.reflect.Constructor;
@@ -32,7 +31,6 @@ import java.util.function.Consumer;
  * @see org.springframework.context.ApplicationContextAware
  * @since 4/3/2022
  */
-@Component
 public class GaussBeanFactory implements ApplicationContextAware {
 
     private static final Log logger = LogFactory.getLog(GaussCacheAspect.class);

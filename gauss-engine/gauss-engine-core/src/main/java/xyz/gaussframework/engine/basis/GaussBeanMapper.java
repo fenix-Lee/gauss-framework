@@ -1,6 +1,5 @@
 package xyz.gaussframework.engine.basis;
 
-import xyz.gaussframework.engine.framework.GaussConversion;
 import xyz.gaussframework.engine.framework.GaussCustomConvertor;
 import xyz.gaussframework.engine.infrastructure.DefaultProcessor;
 import xyz.gaussframework.engine.infrastructure.FieldEngine;
@@ -13,7 +12,6 @@ import ma.glasnost.orika.converter.builtin.CloneableConverter;
 import ma.glasnost.orika.impl.DefaultMapperFactory;
 import ma.glasnost.orika.metadata.ClassMapBuilder;
 import org.springframework.lang.Nullable;
-import org.springframework.stereotype.Component;
 import org.springframework.util.ObjectUtils;
 import xyz.gaussframework.engine.util.GaussClassTypeUtil;
 
@@ -31,7 +29,6 @@ import java.util.Set;
  * @version 2.1
  * @since 4/3/2022
  */
-@Component
 public class GaussBeanMapper {
 
     private static final MapperFactory MAPPER_FACTORY = new DefaultMapperFactory.Builder()
@@ -71,6 +68,7 @@ public class GaussBeanMapper {
         });
     }
 
+    @SuppressWarnings("unused")
     public static<S,D> void mapperRegister(Class<S> source,
                                            Class<D> target,
                                            @Nullable Map<String, String[]> fieldMaps) {
