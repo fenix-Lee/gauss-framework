@@ -1,5 +1,7 @@
 package xyz.gaussframework.engine.basis;
 
+import xyz.gaussframework.engine.exception.GaussFactoryException;
+import xyz.gaussframework.engine.framework.GaussCache;
 import xyz.gaussframework.engine.infrastructure.aspect.GaussCacheAspect;
 import com.google.common.collect.Maps;
 import xyz.gaussframework.engine.util.GaussFactoryUtil;
@@ -49,7 +51,7 @@ public class GaussBeanFactory implements ApplicationContextAware {
      * @return an instance of the object
      */
     @SuppressWarnings("unused")
-    public static <T> T getBean(Class<T> clazz) {
+    public static <T> T getBean(Class<T> clazz) throws GaussFactoryException {
         if (GaussFactoryUtil.checkIfFactory(clazz)) {
             return GaussFactoryGenerator.INSTANCE.getFactory(clazz);
         }
@@ -136,7 +138,7 @@ public class GaussBeanFactory implements ApplicationContextAware {
     }
 
     @SuppressWarnings("unchecked")
-    private static<T> T createObject(Class<T> clazz) {
+    static<T> T createObject(Class<T> clazz) {
         if (objectCache.containsKey(clazz)) {
             return (T) objectCache.get(clazz);
         }

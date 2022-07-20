@@ -1,5 +1,6 @@
 package xyz.gaussframework.engine.basis;
 
+import xyz.gaussframework.engine.exception.GaussMapperException;
 import xyz.gaussframework.engine.framework.GaussCustomConvertor;
 import xyz.gaussframework.engine.infrastructure.DefaultProcessor;
 import xyz.gaussframework.engine.infrastructure.FieldEngine;
@@ -55,15 +56,23 @@ public class GaussBeanMapper {
 
     private void registerGaussConvertor (Class<?> processorClass, String tag, ConverterFactory factory) {
         TAG_MAP.get(processorClass).forEach(t -> {
-            if (GaussClassTypeUtil.isMatchInnerConvertor(processorClass)) {
-                factory.registerConverter(tag,
-                        (ma.glasnost.orika.Converter<?,?>)GaussBeanFactory.getBean(processorClass));
+            try {
+                if (GaussClassTypeUtil.isMatchInnerConvertor(processorClass)) {
+                    factory.registerConverter(tag,
+                            (ma.glasnost.orika.Converter<?, ?>) GaussBeanFactory.getBean(processorClass));
+                }
+            } catch (Exception e) {
+                throw new GaussMapperException(e.getMessage());
             }
 
             if (GaussClassTypeUtil.classTypeMatch(processorClass, GaussCustomConvertor.class)) {
-                factory.registerConverter(tag,
-                        ((xyz.gaussframework.engine.framework.GaussCustomConvertor)GaussBeanFactory
-                                .getBean(processorClass)).getConvertor(tag));
+                try {
+                    factory.registerConverter(tag,
+                            ((xyz.gaussframework.engine.framework.GaussCustomConvertor) GaussBeanFactory
+                                    .getBean(processorClass)).getConvertor(tag));
+                } catch (Exception e) {
+                    throw new GaussMapperException(e.getMessage());
+                }
             }
         });
     }
@@ -82,12 +91,20 @@ public class GaussBeanMapper {
 
     @SuppressWarnings("unused")
     public static<S, D> void mapping(S source, D target) {
-        MAPPER_FACTORY.getMapperFacade().map(source, target);
+        try {
+            MAPPER_FACTORY.getMapperFacade().map(source, target);
+        } catch (Exception e) {
+            throw new GaussMapperException(e.getMessage());
+        }
     }
 
     public static <S, D> D mapping(S source, Class<D> destClazz) {
-        return MAPPER_FACTORY.getMapperFacade()
-                .map(source, destClazz);
+        try {
+            return MAPPER_FACTORY.getMapperFacade()
+                    .map(source, destClazz);
+        } catch (Exception e) {
+            throw new GaussMapperException(e.getMessage());
+        }
     }
 
     private static<S,D> void register(Class<S> source, Class<D> target,

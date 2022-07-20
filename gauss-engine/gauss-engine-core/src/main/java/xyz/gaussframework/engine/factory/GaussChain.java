@@ -2,6 +2,7 @@ package xyz.gaussframework.engine.factory;
 
 import com.google.common.collect.Maps;
 import xyz.gaussframework.engine.basis.GaussBeanFactory;
+import xyz.gaussframework.engine.exception.GaussFactoryException;
 import xyz.gaussframework.engine.framework.Chain;
 import xyz.gaussframework.engine.framework.Chains;
 import org.springframework.context.ApplicationContext;
@@ -86,7 +87,7 @@ public abstract class GaussChain<T> {
     }
 
     private void chainsAnnotationCap(Class<?> chainClass, Map<Integer, T> container, T module) {
-        chainsAnnotationCap(chainClass, container, module, m -> {throw new RuntimeException(m.getClass().getName()
+        chainsAnnotationCap(chainClass, container, module, m -> {throw new GaussFactoryException(m.getClass().getName()
                 + " has already been contained please check the sequence.....");});
     }
 
