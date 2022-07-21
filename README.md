@@ -15,4 +15,4 @@ To add a depedency using Maven, use the following:
 
 ## Importance
 - require JDK 8 or higher
-- Don't forget '@EnableGaussEngine' along with your root Java file(such as spring application start file with '@SpringBootApplication'), otherwise some functions cannot be activated
+- Don't forget `@EnableGaussEngine` along with your root Java file(such as spring application start file with `@SpringBootApplication`), otherwise some functions cannot be activated
