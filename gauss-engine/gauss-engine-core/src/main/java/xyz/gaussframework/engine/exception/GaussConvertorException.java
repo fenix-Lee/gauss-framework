@@ -8,9 +8,4 @@ public class GaussConvertorException extends GaussException {
         super(message);
         this.message = message;
     }
-
-    public GaussConvertorException(String message, Exception superException) {
-        super(message, superException);
-        this.message = message;
-    }
 }
