@@ -1,5 +1,6 @@
 package xyz.gaussframework.engine.basis;
 
+import xyz.gaussframework.engine.exception.GaussFactoryException;
 import xyz.gaussframework.engine.factory.Creator;
 import xyz.gaussframework.engine.factory.GaussFactory;
 import xyz.gaussframework.engine.util.GaussFactoryUtil;
@@ -32,7 +33,7 @@ public enum GaussFactoryGenerator {
             if (GaussBeanFactory.isReady()) {
                 return GaussBeanFactory.getObject(clazz);
             }
-            throw new RuntimeException("Gauss factory generator is not ready");
+            throw new GaussFactoryException("Gauss factory generator is not ready");
         }
         return GaussBeanFactory.copyObject(GaussBeanFactory.getObject(clazz));
     }

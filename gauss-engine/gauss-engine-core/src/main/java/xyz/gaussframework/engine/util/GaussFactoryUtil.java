@@ -1,5 +1,6 @@
 package xyz.gaussframework.engine.util;
 
+import xyz.gaussframework.engine.exception.GaussFactoryException;
 import xyz.gaussframework.engine.factory.GaussFactory;
 import org.springframework.util.ObjectUtils;
 
@@ -22,7 +23,7 @@ public class GaussFactoryUtil {
             gaussFactoryClass = (Class<GaussFactory<?, ?>>) Class
                     .forName("xyz.gaussframework.engine.factory.GaussFactory");
         } catch (ClassNotFoundException e) {
-            throw new RuntimeException(e);
+            throw new GaussFactoryException(e);
         }
 
         return GaussClassTypeUtil.classTypeMatch(sourceClass, gaussFactoryClass);

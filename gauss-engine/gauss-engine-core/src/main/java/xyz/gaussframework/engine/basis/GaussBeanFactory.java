@@ -1,5 +1,7 @@
 package xyz.gaussframework.engine.basis;
 
+import xyz.gaussframework.engine.exception.GaussFactoryException;
+import xyz.gaussframework.engine.framework.GaussCache;
 import xyz.gaussframework.engine.infrastructure.aspect.GaussCacheAspect;
 import com.google.common.collect.Maps;
 import xyz.gaussframework.engine.util.GaussFactoryUtil;
@@ -11,7 +13,6 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.ApplicationContextException;
 import org.springframework.lang.NonNull;
-import org.springframework.stereotype.Component;
 import org.springframework.util.ObjectUtils;
 
 import java.lang.reflect.Constructor;
@@ -32,7 +33,6 @@ import java.util.function.Consumer;
  * @see org.springframework.context.ApplicationContextAware
  * @since 4/3/2022
  */
-@Component
 public class GaussBeanFactory implements ApplicationContextAware {
 
     private static final Log logger = LogFactory.getLog(GaussCacheAspect.class);
@@ -51,7 +51,7 @@ public class GaussBeanFactory implements ApplicationContextAware {
      * @return an instance of the object
      */
     @SuppressWarnings("unused")
-    public static <T> T getBean(Class<T> clazz) {
+    public static <T> T getBean(Class<T> clazz) throws GaussFactoryException {
         if (GaussFactoryUtil.checkIfFactory(clazz)) {
             return GaussFactoryGenerator.INSTANCE.getFactory(clazz);
         }
@@ -138,7 +138,7 @@ public class GaussBeanFactory implements ApplicationContextAware {
     }
 
     @SuppressWarnings("unchecked")
-    private static<T> T createObject(Class<T> clazz) {
+    static<T> T createObject(Class<T> clazz) {
         if (objectCache.containsKey(clazz)) {
             return (T) objectCache.get(clazz);
         }

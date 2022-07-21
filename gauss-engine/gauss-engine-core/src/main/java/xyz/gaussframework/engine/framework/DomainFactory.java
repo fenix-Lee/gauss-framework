@@ -1,6 +1,7 @@
 package xyz.gaussframework.engine.framework;
 
 import org.springframework.lang.NonNull;
+import xyz.gaussframework.engine.exception.GaussFactoryException;
 
 import java.util.List;
 import java.util.function.Function;
@@ -25,7 +26,7 @@ public interface DomainFactory<T, R> {
      */
     @SuppressWarnings("unused")
     default List<R> produce(@NonNull Function<? super T, ? extends R> mapper) {
-        throw new RuntimeException();
+        throw new GaussFactoryException("produce method in DomainFactory must be override...");
     }
 
     /**
@@ -36,6 +37,6 @@ public interface DomainFactory<T, R> {
      */
     @SuppressWarnings("unused")
     default R manufacture(@NonNull Function<List<T>, ? extends R> mapper) {
-        throw new RuntimeException();
+        throw new GaussFactoryException("manufacture method in DomainFactory must be override...");
     }
 }

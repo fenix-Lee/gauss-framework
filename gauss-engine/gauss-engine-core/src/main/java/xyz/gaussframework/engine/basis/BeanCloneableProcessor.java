@@ -5,7 +5,6 @@ import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.config.BeanPostProcessor;
 import org.springframework.core.annotation.AnnotationUtils;
 import org.springframework.lang.NonNull;
-import org.springframework.stereotype.Component;
 import org.springframework.util.ObjectUtils;
 
 /**
@@ -15,7 +14,6 @@ import org.springframework.util.ObjectUtils;
  * @version 1.0
  * @since 4/3/2022
  */
-@Component
 public class BeanCloneableProcessor implements BeanPostProcessor {
 
     @Override
