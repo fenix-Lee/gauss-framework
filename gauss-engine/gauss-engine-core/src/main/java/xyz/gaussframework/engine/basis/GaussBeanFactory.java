@@ -1,7 +1,6 @@
 package xyz.gaussframework.engine.basis;
 
 import xyz.gaussframework.engine.exception.GaussFactoryException;
-import xyz.gaussframework.engine.framework.GaussCache;
 import xyz.gaussframework.engine.infrastructure.aspect.GaussCacheAspect;
 import com.google.common.collect.Maps;
 import xyz.gaussframework.engine.util.GaussFactoryUtil;
@@ -39,9 +38,9 @@ public class GaussBeanFactory implements ApplicationContextAware {
 
     private static ApplicationContext context;
 
-    private static final List<Class<?>> cloneableClazz = new ArrayList<>();
+    private static final List<Class<?>> CLONEABLE_CLASS = new ArrayList<>();
 
-    private static final Map<Class<?>, Object> objectCache = Maps.newConcurrentMap();
+    private static final Map<Class<?>, Object> OBJECT_CACHE = Maps.newConcurrentMap();
 
     /**
      * Get an instance of the object that client acquires through application context. Please use it wisely
@@ -139,11 +138,11 @@ public class GaussBeanFactory implements ApplicationContextAware {
 
     @SuppressWarnings("unchecked")
     static<T> T createObject(Class<T> clazz) {
-        if (objectCache.containsKey(clazz)) {
-            return (T) objectCache.get(clazz);
+        if (OBJECT_CACHE.containsKey(clazz)) {
+            return (T) OBJECT_CACHE.get(clazz);
         }
         T obj = originalInstantiation(clazz);
-        objectCache.put(clazz, obj);
+        OBJECT_CACHE.put(clazz, obj);
         return obj;
     }
 
@@ -173,13 +172,13 @@ public class GaussBeanFactory implements ApplicationContextAware {
     }
 
     static void addCloneableClazz(Class<?> clazz) {
-        if (cloneableClazz.contains(clazz))
+        if (CLONEABLE_CLASS.contains(clazz))
             return;
-        cloneableClazz.add(clazz);
+        CLONEABLE_CLASS.add(clazz);
     }
 
     static Class<?>[] getCloneableClass() {
-        return cloneableClazz.toArray(new Class<?>[0]);
+        return CLONEABLE_CLASS.toArray(new Class<?>[0]);
     }
 
     public static boolean isReady() {
