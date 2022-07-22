@@ -29,4 +29,10 @@ public @interface GaussCache {
      * @return custom key
      */
     String key() default "";
+
+    /**
+     * for how long gauss engine hold the result
+     * @return delay time
+     */
+    long expire() default 30000;
 }
