@@ -145,7 +145,6 @@ public class GaussCacheAspect {
                 @Override
                 public void run() {
                     synchronized (CONTEXT) {
-                        System.out.println("---- remove ----");
                         CONTEXT.remove(key);
                     }
                 }
