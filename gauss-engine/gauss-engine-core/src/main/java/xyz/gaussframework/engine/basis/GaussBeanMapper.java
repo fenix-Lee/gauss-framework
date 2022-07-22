@@ -77,6 +77,14 @@ public class GaussBeanMapper {
         });
     }
 
+    /**
+     * register a 'temporary' mapping strategy for a readable only class you are not capable of configuring
+     * @param source source class
+     * @param target target class
+     * @param fieldMaps the field mapping to
+     * @param <S> source type
+     * @param <D> target type
+     */
     @SuppressWarnings("unused")
     public static<S,D> void mapperRegister(Class<S> source,
                                            Class<D> target,
@@ -89,6 +97,13 @@ public class GaussBeanMapper {
         register(source, target, fieldMaps);
     }
 
+    /**
+     * copy {@code source} value to {@code target} provided by client
+     * @param source source instance
+     * @param target target instance
+     * @param <S> source type
+     * @param <D> target type
+     */
     @SuppressWarnings("unused")
     public static<S, D> void mapping(S source, D target) {
         try {
@@ -98,6 +113,14 @@ public class GaussBeanMapper {
         }
     }
 
+    /**
+     * get target with values copied from {@code source}
+     * @param source source instance
+     * @param destClazz target class
+     * @return target
+     * @param <S> source type
+     * @param <D> target type
+     */
     public static <S, D> D mapping(S source, Class<D> destClazz) {
         try {
             return MAPPER_FACTORY.getMapperFacade()
