@@ -7,7 +7,7 @@ To add a dependency by Maven, use the following:
 <dependency>
      <groupId>xyz.gaussframework</groupId>
      <artifactId>gauss-engine-spring-boot-starter</artifactId>
-     <version>2.2.4</version>
+     <version>2.2.5</version>
 </dependency>
 ```
 ## Learn about Gauss
