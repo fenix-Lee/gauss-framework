@@ -36,7 +36,7 @@ public abstract class GaussChain<T> {
         return copyModules();
     }
 
-    private List<T> copyModules() {
+    protected List<T> copyModules() {
         return modules.stream()
                 .map(GaussBeanFactory::copyObject)
                 .collect(Collectors.toList());
@@ -45,6 +45,10 @@ public abstract class GaussChain<T> {
     @SuppressWarnings("unused")
     protected void setModules(List<T> modules) {
         this.modules = modules;
+    }
+
+    protected List<T> findModules() {
+        return modules;
     }
 
     protected List<T> sortModule(Map<Integer, T> container) {

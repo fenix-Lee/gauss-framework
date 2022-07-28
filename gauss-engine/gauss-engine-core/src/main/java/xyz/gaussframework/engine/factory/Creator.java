@@ -1,6 +1,7 @@
 package xyz.gaussframework.engine.factory;
 
 import org.springframework.stereotype.Component;
+import xyz.gaussframework.engine.framework.OverrideClone;
 
 import java.lang.annotation.*;
 
@@ -15,6 +16,7 @@ import java.lang.annotation.*;
 @Documented
 @Inherited
 @Component
+@OverrideClone
 public @interface Creator {
 
     /**

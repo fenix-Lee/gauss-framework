@@ -21,26 +21,28 @@ public abstract class GaussFactory<T, R> extends GaussChain<T>
 
     @SuppressWarnings("unused")
     public List<T> produce() {
-        return getModules();
+        return findModules();
     }
 
     @Override
     public List<R> produce(@NonNull Function<? super T, ? extends R> mapper) {
-        return getModules().stream()
+        return findModules().stream()
                 .map(mapper)
                 .collect(Collectors.toList());
     }
 
     @Override
     public R manufacture(@NonNull Function<List<T>, ? extends R> mapper) {
-        return mapper.apply(getModules());
+        return mapper.apply(findModules());
     }
 
     @Override
     @SuppressWarnings("unchecked")
     public GaussFactory<T, R> clone() {
         try {
-            return (GaussFactory<T, R>) super.clone();
+            GaussFactory<T, R> copy = (GaussFactory<T, R>) super.clone();
+            copy.setModules(getModules());
+            return copy;
         } catch (CloneNotSupportedException e) {
             throw new AssertionError();
         }
