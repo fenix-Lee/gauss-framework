@@ -40,7 +40,7 @@ public class BeanMapperProcessor implements BeanPostProcessor {
                 return bean;
             }
             GaussFieldEngine fieldEngine = GaussFieldEngine.fireUp(source, mapper.target());
-            fieldEngine.setFieldMaps(source.getDeclaredFields());
+            fieldEngine.setFieldMaps(findAllFields(source));
             GaussBeanMapper.addFieldEngine(fieldEngine);
             return bean;
         }
@@ -48,10 +48,20 @@ public class BeanMapperProcessor implements BeanPostProcessor {
         Arrays.stream(mappers.value())
                 .forEach(m -> {
                     GaussFieldEngine fieldEngine = GaussFieldEngine.fireUp(source, m.target());
-                    fieldEngine.setFieldMaps(source.getDeclaredFields());
+                    fieldEngine.setFieldMaps(findAllFields(source));
                     GaussBeanMapper.addFieldEngine(fieldEngine);
                 });
         return bean;
+    }
+
+    private Field[] findAllFields (Class<?> source) {
+        List<Field> fields = Lists.newArrayList(source.getDeclaredFields());
+        Class<?> superClass = source.getSuperclass();
+        while (!ObjectUtils.isEmpty(superClass)) {
+            fields.addAll(Lists.newArrayList(superClass.getDeclaredFields()));
+            superClass = superClass.getSuperclass();
+        }
+        return fields.toArray(new Field[0]);
     }
 
     private static class GaussFieldEngine implements FieldEngine {
@@ -87,6 +97,9 @@ public class BeanMapperProcessor implements BeanPostProcessor {
         }
 
         void setFieldMaps(Field[] fields) {
+            if (ObjectUtils.isEmpty(fields)) {
+                return;
+            }
             fieldMetaData = Maps.newHashMapWithExpectedSize(fields.length);
             Arrays.stream(fields).forEach(f -> {
                 Mappings mappings; FieldMapping fieldMapping;
