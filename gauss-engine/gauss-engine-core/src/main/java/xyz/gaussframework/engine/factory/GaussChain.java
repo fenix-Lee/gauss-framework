@@ -60,7 +60,7 @@ public abstract class GaussChain<T> {
 
     @PostConstruct
     @SuppressWarnings("unchecked")
-    private void afterPropertiesSet() {
+    private void moduleSetup() {
         Class<?> chainClass = getClass();
         // get all classes with specific annotation
         // notice: this method will get different results(based on different version of spring boot)
