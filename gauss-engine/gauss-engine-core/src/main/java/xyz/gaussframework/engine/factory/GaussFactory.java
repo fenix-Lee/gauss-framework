@@ -21,19 +21,19 @@ public abstract class GaussFactory<T, R> extends GaussChain<T>
 
     @SuppressWarnings("unused")
     public List<T> produce() {
-        return findModules();
+        return getModules();
     }
 
     @Override
     public List<R> produce(@NonNull Function<? super T, ? extends R> mapper) {
-        return findModules().stream()
+        return getModules().stream()
                 .map(mapper)
                 .collect(Collectors.toList());
     }
 
     @Override
     public R manufacture(@NonNull Function<List<T>, ? extends R> mapper) {
-        return mapper.apply(findModules());
+        return mapper.apply(getModules());
     }
 
     @Override
