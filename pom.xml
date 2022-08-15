@@ -6,7 +6,7 @@
 
     <groupId>xyz.gaussframework</groupId>
     <artifactId>gauss-parent</artifactId>
-    <version>2.2.8-SNAPSHOT</version>
+    <version>2.2.8</version>
     <name>gauss-parent</name>
     <description>java code engine</description>
     <url>https://github.com/fenix-Lee/gauss-framework</url>
