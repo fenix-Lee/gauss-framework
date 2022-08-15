@@ -101,8 +101,8 @@ class GaussConversionRegistrar implements ImportBeanDefinitionRegistrar,
         definition.addPropertyValue("type", className);
         definition.addPropertyValue("name", name);
 
-//        definition.setPrimary(true); // spring-context that below 5.3.x may have no setPrimary method
         AbstractBeanDefinition beanDefinition = definition.getBeanDefinition();
+        beanDefinition.setPrimary(true);
         BeanDefinitionHolder holder = new BeanDefinitionHolder(beanDefinition, className, new String[] {name});
 
         BeanDefinitionReaderUtils.registerBeanDefinition(holder, registry);

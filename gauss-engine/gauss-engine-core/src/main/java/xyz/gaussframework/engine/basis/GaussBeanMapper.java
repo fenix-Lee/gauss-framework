@@ -61,18 +61,14 @@ public class GaussBeanMapper {
                     factory.registerConverter(tag,
                             (ma.glasnost.orika.Converter<?, ?>) GaussBeanFactory.getBean(processorClass));
                 }
+
+                if (GaussClassTypeUtil.classTypeMatch(processorClass, GaussCustomConvertor.class)) {
+                        factory.registerConverter(tag,
+                                ((xyz.gaussframework.engine.framework.GaussCustomConvertor) GaussBeanFactory
+                                        .getBean(processorClass)).getConvertor(tag));
+                }
             } catch (Exception e) {
                 throw new GaussMapperException(e.getMessage());
-            }
-
-            if (GaussClassTypeUtil.classTypeMatch(processorClass, GaussCustomConvertor.class)) {
-                try {
-                    factory.registerConverter(tag,
-                            ((xyz.gaussframework.engine.framework.GaussCustomConvertor) GaussBeanFactory
-                                    .getBean(processorClass)).getConvertor(tag));
-                } catch (Exception e) {
-                    throw new GaussMapperException(e.getMessage());
-                }
             }
         });
     }

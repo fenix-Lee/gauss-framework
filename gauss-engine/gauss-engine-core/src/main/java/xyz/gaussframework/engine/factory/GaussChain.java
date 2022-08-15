@@ -1,6 +1,7 @@
 package xyz.gaussframework.engine.factory;
 
 import com.google.common.collect.Maps;
+import io.cucumber.java.sl.In;
 import xyz.gaussframework.engine.basis.GaussBeanFactory;
 import xyz.gaussframework.engine.exception.GaussFactoryException;
 import xyz.gaussframework.engine.framework.Chain;
@@ -32,26 +33,22 @@ public abstract class GaussChain<T> {
     private List<T> modules;
 
     // strongly recommend returning a copy of operations instead of original one
-    public List<T> getModules() {
+    public final List<T> getModules() {
         return copyModules();
     }
 
-    protected List<T> copyModules() {
+    private List<T> copyModules() {
         return modules.stream()
                 .map(GaussBeanFactory::copyObject)
                 .collect(Collectors.toList());
     }
 
     @SuppressWarnings("unused")
-    protected void setModules(List<T> modules) {
+    protected final void setModules(List<T> modules) {
         this.modules = modules;
     }
 
-    protected List<T> findModules() {
-        return modules;
-    }
-
-    protected List<T> sortModule(Map<Integer, T> container) {
+    private List<T> sortModule(Map<Integer, T> container) {
         return container.entrySet().stream()
                 .sorted(Comparator.comparingInt(Map.Entry::getKey))
                 .map(Map.Entry::getValue)
@@ -59,9 +56,23 @@ public abstract class GaussChain<T> {
     }
 
     @PostConstruct
+    private void moduleInitialization() {
+        Class<?> chainTypeClass = getClass();
+        while (!ObjectUtils.isEmpty(chainTypeClass)) {
+            if (chainTypeClass.equals(GaussFactory.class)) {
+                return;
+            }
+            Map<Integer, T> container = capContainer(chainTypeClass);
+            if (!ObjectUtils.isEmpty(container)) {
+                modules = sortModule(container);
+                break;
+            }
+            chainTypeClass = chainTypeClass.getSuperclass();
+        }
+    }
+
     @SuppressWarnings("unchecked")
-    private void afterPropertiesSet() {
-        Class<?> chainClass = getClass();
+    private Map<Integer, T> capContainer (Class<?> chainClass) {
         // get all classes with specific annotation
         // notice: this method will get different results(based on different version of spring boot)
         Map<String, Object> modulesWithChainsMap = context.getBeansWithAnnotation(Chains.class);
@@ -87,7 +98,7 @@ public abstract class GaussChain<T> {
                 container.put(chain.sequence(), (T)m);
             }
         });
-        modules = sortModule(container);
+        return container;
     }
 
     private void chainsAnnotationCap(Class<?> chainClass, Map<Integer, T> container, T module) {
