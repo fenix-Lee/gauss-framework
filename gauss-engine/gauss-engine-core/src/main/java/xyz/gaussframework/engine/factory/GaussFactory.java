@@ -8,7 +8,8 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 
 /**
- *
+ * Base factory class for being extended by custom-defined factory if wish to 'combine' its own
+ * chain classes
  *
  * @author Chang Su
  * @version 1.0

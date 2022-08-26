@@ -1,5 +1,8 @@
 package xyz.gaussframework.engine.framework;
 
+import ma.glasnost.orika.metadata.Type;
+import org.springframework.util.Assert;
+
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;

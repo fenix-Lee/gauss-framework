@@ -6,10 +6,12 @@ import org.springframework.util.Assert;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
+import java.util.Map;
 
 class GaussConversionInvocationHandler implements InvocationHandler {
 
     private final Target<?> target;
+
 
     private static final Object EMPTY = new Object();
 
@@ -20,8 +22,7 @@ class GaussConversionInvocationHandler implements InvocationHandler {
     @Override
     @SuppressWarnings("unchecked")
     public Object invoke(Object proxy, Method method, Object[] args) {
-        String methodName = method.getName();
-        switch (methodName) {
+        switch (method.getName()) {
             case "canConvert":
                 return true;
             case "convert":

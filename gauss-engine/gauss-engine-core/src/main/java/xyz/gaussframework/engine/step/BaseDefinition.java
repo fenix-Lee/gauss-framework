@@ -1,6 +1,6 @@
 package xyz.gaussframework.engine.step;
 
-import xyz.gaussframework.engine.basis.GaussBeanFactory;
+import xyz.gaussframework.engine.framework.GaussBeanFactory;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;

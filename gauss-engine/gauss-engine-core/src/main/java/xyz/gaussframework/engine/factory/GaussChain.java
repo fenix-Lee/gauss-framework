@@ -1,8 +1,7 @@
 package xyz.gaussframework.engine.factory;
 
 import com.google.common.collect.Maps;
-import io.cucumber.java.sl.In;
-import xyz.gaussframework.engine.basis.GaussBeanFactory;
+import xyz.gaussframework.engine.framework.GaussBeanFactory;
 import xyz.gaussframework.engine.exception.GaussFactoryException;
 import xyz.gaussframework.engine.framework.Chain;
 import xyz.gaussframework.engine.framework.Chains;

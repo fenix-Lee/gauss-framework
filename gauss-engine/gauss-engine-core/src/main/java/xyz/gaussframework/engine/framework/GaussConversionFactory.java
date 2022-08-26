@@ -1,6 +1,8 @@
 package xyz.gaussframework.engine.framework;
 
+import ma.glasnost.orika.Converter;
 import org.springframework.beans.factory.FactoryBean;
+import xyz.gaussframework.engine.exception.GaussConvertorException;
 
 class GaussConversionFactory implements FactoryBean<Object> {
 
@@ -17,6 +19,13 @@ class GaussConversionFactory implements FactoryBean<Object> {
     <T> T getTarget() {
         return (T) new Targeter.GaussTargeter()
                 .target(new Target.GaussCodedTarget<>(type, name));
+    }
+
+    interface GaussCustomConvertor {
+
+        default <S,D> Converter<S, D> getConvertor(String tag) {
+            throw new GaussConvertorException("tag: " + tag + " must be casted by handler...");
+        }
     }
 
     @Override

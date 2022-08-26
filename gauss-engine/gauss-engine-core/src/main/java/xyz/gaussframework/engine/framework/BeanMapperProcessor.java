@@ -1,9 +1,5 @@
-package xyz.gaussframework.engine.basis;
+package xyz.gaussframework.engine.framework;
 
-import xyz.gaussframework.engine.framework.FieldMapping;
-import xyz.gaussframework.engine.framework.Mapper;
-import xyz.gaussframework.engine.framework.Mappers;
-import xyz.gaussframework.engine.framework.Mappings;
 import xyz.gaussframework.engine.infrastructure.DefaultProcessor;
 import xyz.gaussframework.engine.infrastructure.FieldEngine;
 import xyz.gaussframework.engine.infrastructure.FieldMetaData;

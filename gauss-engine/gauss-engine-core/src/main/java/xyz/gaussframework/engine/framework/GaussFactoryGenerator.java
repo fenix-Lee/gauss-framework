@@ -1,4 +1,4 @@
-package xyz.gaussframework.engine.basis;
+package xyz.gaussframework.engine.framework;
 
 import xyz.gaussframework.engine.exception.GaussFactoryException;
 import xyz.gaussframework.engine.factory.Creator;

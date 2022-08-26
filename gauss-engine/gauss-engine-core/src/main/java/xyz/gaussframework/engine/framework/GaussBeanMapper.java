@@ -1,7 +1,6 @@
-package xyz.gaussframework.engine.basis;
+package xyz.gaussframework.engine.framework;
 
 import xyz.gaussframework.engine.exception.GaussMapperException;
-import xyz.gaussframework.engine.framework.GaussCustomConvertor;
 import xyz.gaussframework.engine.infrastructure.DefaultProcessor;
 import xyz.gaussframework.engine.infrastructure.FieldEngine;
 import xyz.gaussframework.engine.infrastructure.FieldMetaData;
@@ -41,7 +40,7 @@ public class GaussBeanMapper {
     private static final Map<Class<?>, Set<String>> TAG_MAP = Maps.newConcurrentMap();
 
     @PostConstruct
-    public void init() {
+    private void init() {
         ConverterFactory converterFactory = MAPPER_FACTORY.getConverterFactory();
         // register convertor
         converterFactory.registerConverter(new CloneableConverter(GaussBeanFactory.getCloneableClass()));
@@ -62,11 +61,10 @@ public class GaussBeanMapper {
                             (ma.glasnost.orika.Converter<?, ?>) GaussBeanFactory.getBean(processorClass));
                 }
 
-                if (GaussClassTypeUtil.classTypeMatch(processorClass, GaussCustomConvertor.class)) {
-                        factory.registerConverter(tag,
-                                ((xyz.gaussframework.engine.framework.GaussCustomConvertor) GaussBeanFactory
-                                        .getBean(processorClass)).getConvertor(tag));
-                }
+                factory.registerConverter(tag,
+                        ((GaussConversionFactory.GaussCustomConvertor) GaussBeanFactory
+                                .getBean(processorClass)).getConvertor(tag));
+
             } catch (Exception e) {
                 throw new GaussMapperException(e.getMessage());
             }

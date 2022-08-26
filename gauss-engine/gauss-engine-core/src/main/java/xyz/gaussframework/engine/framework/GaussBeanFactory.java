@@ -1,4 +1,4 @@
-package xyz.gaussframework.engine.basis;
+package xyz.gaussframework.engine.framework;
 
 import xyz.gaussframework.engine.exception.GaussFactoryException;
 import xyz.gaussframework.engine.infrastructure.aspect.GaussCacheAspect;
@@ -113,11 +113,12 @@ public class GaussBeanFactory implements ApplicationContextAware {
             return GaussFactoryGenerator.INSTANCE.getFactory(clazz);
         }
         Constructor<T>[] ctors = (Constructor<T>[]) clazz.getDeclaredConstructors();
+        Class<?>[] argTypes = (Class<?>[]) Arrays.stream(args)
+                .map(Object::getClass).toArray();
         Optional<Constructor<T>> properCtor = Arrays.stream(ctors)
-                .filter(c -> Arrays.equals(c.getParameterTypes(), Arrays.stream(args)
-                        .map(Object::getClass).toArray()))
+                .filter(c -> filterConstructors(c.getParameterTypes(), argTypes))
                 .findAny();
-        return copyObject(createObjectWithCtor(properCtor.orElseThrow(IllegalArgumentException::new), args));
+        return createObjectWithCtor(properCtor.orElseThrow(IllegalArgumentException::new), args);
     }
 
     /**
@@ -133,7 +134,7 @@ public class GaussBeanFactory implements ApplicationContextAware {
         if (GaussFactoryUtil.checkIfFactory(clazz)) {
             return GaussFactoryGenerator.INSTANCE.getFactory(clazz);
         }
-        return copyObject(createObjectWithCtor(ctor, args));
+        return createObjectWithCtor(ctor, args);
     }
 
     @SuppressWarnings("unchecked")
@@ -166,7 +167,7 @@ public class GaussBeanFactory implements ApplicationContextAware {
         try {
             return (T) GaussBeanMapper.mapping(source, source.getClass());
         } catch (Exception e) {
-            e.printStackTrace();
+           logger.error(e.getMessage());
         }
         return null;
     }
@@ -183,6 +184,26 @@ public class GaussBeanFactory implements ApplicationContextAware {
 
     public static boolean isReady() {
         return !ObjectUtils.isEmpty(context);
+    }
+
+    private static boolean filterConstructors (Class<?>[] fromParameterTypes, Class<?>[] toParameterTypes) {
+        if (!Arrays.equals(fromParameterTypes, toParameterTypes)) {
+            if (fromParameterTypes.length == toParameterTypes.length) {
+                return filterAssignable(fromParameterTypes, toParameterTypes);
+            }
+            return false;
+        }
+        return true;
+    }
+
+    private static boolean filterAssignable (Class<?>[] fromParameterTypes, Class<?>[] toParameterTypes) {
+        for (int i = 0; i < fromParameterTypes.length; i++) {
+            if (!fromParameterTypes[i].isAssignableFrom(toParameterTypes[i]) &&
+                    !toParameterTypes[i].isAssignableFrom(fromParameterTypes[i])) {
+                return false;
+            }
+        }
+        return true;
     }
 
     /**
