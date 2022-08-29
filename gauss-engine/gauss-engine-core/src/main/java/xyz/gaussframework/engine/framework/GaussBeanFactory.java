@@ -1,8 +1,13 @@
-package xyz.gaussframework.engine.basis;
+package xyz.gaussframework.engine.framework;
 
+import com.google.common.collect.Lists;
+import org.junit.jupiter.api.Order;
+import org.springframework.core.Ordered;
 import xyz.gaussframework.engine.exception.GaussFactoryException;
+import xyz.gaussframework.engine.factory.Creator;
 import xyz.gaussframework.engine.infrastructure.aspect.GaussCacheAspect;
 import com.google.common.collect.Maps;
+import xyz.gaussframework.engine.infrastructure.listener.GaussEvent;
 import xyz.gaussframework.engine.util.GaussFactoryUtil;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -14,6 +19,7 @@ import org.springframework.context.ApplicationContextException;
 import org.springframework.lang.NonNull;
 import org.springframework.util.ObjectUtils;
 
+import java.lang.annotation.Annotation;
 import java.lang.reflect.Constructor;
 import java.util.*;
 import java.util.function.Consumer;
@@ -32,6 +38,7 @@ import java.util.function.Consumer;
  * @see org.springframework.context.ApplicationContextAware
  * @since 4/3/2022
  */
+@Order(Ordered.HIGHEST_PRECEDENCE)
 public class GaussBeanFactory implements ApplicationContextAware {
 
     private static final Log logger = LogFactory.getLog(GaussCacheAspect.class);
@@ -39,6 +46,8 @@ public class GaussBeanFactory implements ApplicationContextAware {
     private static ApplicationContext context;
 
     private static final List<Class<?>> CLONEABLE_CLASS = new ArrayList<>();
+
+    private static final List<Object> REGISTERS = Lists.newArrayList();
 
     private static final Map<Class<?>, Object> OBJECT_CACHE = Maps.newConcurrentMap();
 
@@ -60,6 +69,10 @@ public class GaussBeanFactory implements ApplicationContextAware {
             logger.error("GaussBeanFactory is not ready yet...");
             throw new ApplicationContextException("GaussBeanFactory cannot get required bean....") ;
         }
+    }
+
+    public static Map<String, Object> getBeansWithAnnotation (Class<? extends Annotation> annotationClass) {
+        return context.getBeansWithAnnotation(annotationClass);
     }
 
     /**
@@ -113,11 +126,12 @@ public class GaussBeanFactory implements ApplicationContextAware {
             return GaussFactoryGenerator.INSTANCE.getFactory(clazz);
         }
         Constructor<T>[] ctors = (Constructor<T>[]) clazz.getDeclaredConstructors();
+        Class<?>[] argTypes = (Class<?>[]) Arrays.stream(args)
+                .map(Object::getClass).toArray();
         Optional<Constructor<T>> properCtor = Arrays.stream(ctors)
-                .filter(c -> Arrays.equals(c.getParameterTypes(), Arrays.stream(args)
-                        .map(Object::getClass).toArray()))
+                .filter(c -> filterConstructors(c.getParameterTypes(), argTypes))
                 .findAny();
-        return copyObject(createObjectWithCtor(properCtor.orElseThrow(IllegalArgumentException::new), args));
+        return createObjectWithCtor(properCtor.orElseThrow(IllegalArgumentException::new), args);
     }
 
     /**
@@ -133,7 +147,7 @@ public class GaussBeanFactory implements ApplicationContextAware {
         if (GaussFactoryUtil.checkIfFactory(clazz)) {
             return GaussFactoryGenerator.INSTANCE.getFactory(clazz);
         }
-        return copyObject(createObjectWithCtor(ctor, args));
+        return createObjectWithCtor(ctor, args);
     }
 
     @SuppressWarnings("unchecked")
@@ -166,7 +180,7 @@ public class GaussBeanFactory implements ApplicationContextAware {
         try {
             return (T) GaussBeanMapper.mapping(source, source.getClass());
         } catch (Exception e) {
-            e.printStackTrace();
+           logger.error(e.getMessage());
         }
         return null;
     }
@@ -185,6 +199,26 @@ public class GaussBeanFactory implements ApplicationContextAware {
         return !ObjectUtils.isEmpty(context);
     }
 
+    private static boolean filterConstructors (Class<?>[] fromParameterTypes, Class<?>[] toParameterTypes) {
+        if (!Arrays.equals(fromParameterTypes, toParameterTypes)) {
+            if (fromParameterTypes.length == toParameterTypes.length) {
+                return filterAssignable(fromParameterTypes, toParameterTypes);
+            }
+            return false;
+        }
+        return true;
+    }
+
+    private static boolean filterAssignable (Class<?>[] fromParameterTypes, Class<?>[] toParameterTypes) {
+        for (int i = 0; i < fromParameterTypes.length; i++) {
+            if (!fromParameterTypes[i].isAssignableFrom(toParameterTypes[i]) &&
+                    !toParameterTypes[i].isAssignableFrom(fromParameterTypes[i])) {
+                return false;
+            }
+        }
+        return true;
+    }
+
     /**
      * This method is inherited from Spring-aware component and leave here for client to replace the context
      * container if client wishes to change context implementation by its own.
@@ -195,5 +229,7 @@ public class GaussBeanFactory implements ApplicationContextAware {
     public void setApplicationContext(@NonNull ApplicationContext applicationContext)
             throws BeansException {
         context = applicationContext;
+        // publish listener for gauss chain
+        context.publishEvent(new GaussEvent(getBeansWithAnnotation(Creator.class)));
     }
 }

@@ -1,6 +1,5 @@
-package xyz.gaussframework.engine.basis;
+package xyz.gaussframework.engine.framework;
 
-import xyz.gaussframework.engine.framework.OverrideClone;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.config.BeanPostProcessor;
 import org.springframework.core.annotation.AnnotationUtils;

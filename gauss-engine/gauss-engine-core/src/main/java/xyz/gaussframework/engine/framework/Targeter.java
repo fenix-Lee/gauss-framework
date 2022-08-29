@@ -12,19 +12,36 @@ import java.lang.reflect.Proxy;
 import java.util.Arrays;
 import java.util.Map;
 
+/**
+ *
+ * @author Chang Su
+ * @version 3.0
+ * @see InvocationHandlerFactory
+ * @see GaussTargeter
+ * @see GaussConversionTargeter
+ * @since 2.0.0
+ */
 interface Targeter {
 
     <T> T target(Target<T> target);
 
     @SuppressWarnings("unchecked")
-    default <T> T getProxyInstance(Target<T> target, InvocationHandler handler) {
-        return (T) Proxy.newProxyInstance(ClassUtils.getDefaultClassLoader(),
-                new Class[]{target.type()}, handler);
+    default <T> T getProxyInstance(Target<T> target, InvocationHandler handler, Class<?>... others) {
+        Class<?>[] types = new Class[others.length + 1];
+        if (!ObjectUtils.isEmpty(others)) {
+            System.arraycopy(others, 0, types, 0, others.length);
+        }
+        types[others.length] = target.type();
+        return (T) Proxy.newProxyInstance(ClassUtils.getDefaultClassLoader(), types, handler);
     }
 
+    /**
+     *
+     * @author Chang Su
+     * @version 3.0
+     * @since 2.0.0
+     */
     class GaussTargeter implements Targeter {
-
-        private final InvocationHandlerFactory factory = new InvocationHandlerFactory.GaussDefaultHandlerFactory();
 
         @Override
         public <T> T target(Target<T> target) {
@@ -33,8 +50,8 @@ interface Targeter {
 
         private <T> T newInstance(Target<T> target) {
             Map<String, GaussConversion<Object,Object>> fieldMetadata = readConversionMetaData(target.type());
-            InvocationHandler handler = factory.create(target, fieldMetadata);
-            return getProxyInstance(target, handler);
+            InvocationHandler handler = InvocationHandlerFactory.create(target, fieldMetadata);
+            return getProxyInstance(target, handler, GaussConversionFactory.GaussCustomConvertor.class);
         }
 
         @SuppressWarnings("unchecked")
@@ -50,9 +67,13 @@ interface Targeter {
         }
     }
 
+    /**
+     *
+     * @author Chang Su
+     * @version 3.0
+     * @since 2.0.0
+     */
     class GaussConversionTargeter implements Targeter {
-
-        private final InvocationHandlerFactory factory = new InvocationHandlerFactory.GaussDefaultHandlerFactory();
 
         @Override
         public <T> T target(Target<T> target) {
@@ -60,8 +81,7 @@ interface Targeter {
         }
 
         private <T> T getCustomConvertorProxy(Target<T> target) {
-            InvocationHandler handler = ((InvocationHandlerFactory.GaussDefaultHandlerFactory)factory)
-                    .create(target);
+            InvocationHandler handler = InvocationHandlerFactory.create(target);
             return getProxyInstance(target, handler);
         }
     }

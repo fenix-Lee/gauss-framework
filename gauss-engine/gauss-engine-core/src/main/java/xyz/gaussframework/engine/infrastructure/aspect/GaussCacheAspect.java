@@ -67,13 +67,13 @@ public class GaussCacheAspect {
             String gaussCacheKey = gaussCacheAnnotation.key();
             String[] parameterNames = new DefaultParameterNameDiscoverer().getParameterNames(proxyMethod);
             if (!ObjectUtils.isEmpty(gaussCacheKey)) {
-                Expression expression = new SpelExpressionParser().parseExpression(gaussCacheKey);
-                for (int i = 0; i < Objects.requireNonNull(parameterNames).length; i++) {
-                    context.setVariable(parameterNames[i],args[i]);
-                }
                 try {
+                    Expression expression = new SpelExpressionParser().parseExpression(gaussCacheKey);
+                    for (int i = 0; i < Objects.requireNonNull(parameterNames).length; i++) {
+                        context.setVariable(parameterNames[i],args[i]);
+                    }
                     key = prefix + "::" + expression.getValue(context);
-                } catch (SpelEvaluationException e) {
+                } catch (Exception e) {
                     logger.error("GaussCache.key is not a springEL expression.....");
                     key = "";
                 }

@@ -8,12 +8,22 @@ import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 
-
+/**
+ * Enables Gauss conversion and mapping capability. This is very important annotation for Gauss Engine
+ * core functions especially for custom-defined convertor and self-defined {@link Mapper} for entities.
+ *
+ * @author Chang Su
+ * @version 1.0
+ * @see Mapper
+ * @see GaussConvertor
+ * @since 6/7/2022
+ */
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
 @Import({GaussConversionRegistrar.class, GaussMapperImportSelector.class})
 public @interface EnableGaussEngine {
+
     /**
      * Alias for the {@link #basePackages()} attribute. Allows for more concise annotation
      * declarations e.g.: {@code @ComponentScan("org.my.pkg")} instead of

@@ -1,2 +1,5 @@
 org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
 xyz.gaussframework.engine.GaussAutoConfiguration
+
+org.springframework.context.ApplicationListener=\
+xyz.gaussframework.engine.infrastructure.listener.GaussListener

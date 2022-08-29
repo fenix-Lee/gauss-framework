@@ -1,10 +1,10 @@
 package xyz.gaussframework.engine;
 
 import org.springframework.context.annotation.*;
-import xyz.gaussframework.engine.basis.BeanCloneableProcessor;
-import xyz.gaussframework.engine.basis.BeanMapperProcessor;
-import xyz.gaussframework.engine.basis.GaussBeanFactory;
-import xyz.gaussframework.engine.basis.GaussBeanMapper;
+import xyz.gaussframework.engine.framework.BeanCloneableProcessor;
+import xyz.gaussframework.engine.framework.BeanMapperProcessor;
+import xyz.gaussframework.engine.framework.GaussBeanFactory;
+import xyz.gaussframework.engine.framework.GaussBeanMapper;
 import xyz.gaussframework.engine.infrastructure.aspect.GaussCacheAspect;
 
 @Configuration
