@@ -51,6 +51,7 @@ public class GaussBeanMapper {
             FIELD_ENGINES.forEach(engine -> registerMetaData(engine.getSourceType(),
                     engine.getTargetType(), engine.getFieldAnnotatedMetaData()));
         }
+        // register custom object factory
     }
 
     private void registerGaussConvertor (Class<?> processorClass, String tag, ConverterFactory factory) {

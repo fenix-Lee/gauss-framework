@@ -15,7 +15,7 @@ import java.lang.annotation.RetentionPolicy;
  * @author Chang Su
  * @version 1.0
  * @see Mapper
- * @see GaussCustomConvertor
+ * @see GaussConvertor
  * @since 6/7/2022
  */
 @Target(ElementType.TYPE)

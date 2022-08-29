@@ -1,10 +1,10 @@
 package xyz.gaussframework.engine.framework;
 
+import com.google.common.collect.Lists;
 import org.junit.jupiter.api.Order;
 import org.springframework.core.Ordered;
 import xyz.gaussframework.engine.exception.GaussFactoryException;
 import xyz.gaussframework.engine.factory.Creator;
-import xyz.gaussframework.engine.factory.GaussChain;
 import xyz.gaussframework.engine.infrastructure.aspect.GaussCacheAspect;
 import com.google.common.collect.Maps;
 import xyz.gaussframework.engine.infrastructure.listener.GaussEvent;
@@ -46,6 +46,8 @@ public class GaussBeanFactory implements ApplicationContextAware {
     private static ApplicationContext context;
 
     private static final List<Class<?>> CLONEABLE_CLASS = new ArrayList<>();
+
+    private static final List<Object> REGISTERS = Lists.newArrayList();
 
     private static final Map<Class<?>, Object> OBJECT_CACHE = Maps.newConcurrentMap();
 

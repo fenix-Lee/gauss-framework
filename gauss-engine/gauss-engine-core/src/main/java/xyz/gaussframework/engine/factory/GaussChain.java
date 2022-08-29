@@ -36,6 +36,9 @@ public abstract class GaussChain<T> {
     }
 
     private List<T> copyModules() {
+        if (ObjectUtils.isEmpty(modules)) {
+            return null;
+        }
         return modules.stream()
                 .map(GaussBeanFactory::copyObject)
                 .collect(Collectors.toList());
