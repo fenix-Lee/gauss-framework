@@ -1,18 +1,18 @@
 package xyz.gaussframework.engine.factory;
 
 import com.google.common.collect.Maps;
+import org.springframework.context.ApplicationEvent;
 import xyz.gaussframework.engine.framework.GaussBeanFactory;
 import xyz.gaussframework.engine.exception.GaussFactoryException;
 import xyz.gaussframework.engine.framework.Chain;
 import xyz.gaussframework.engine.framework.Chains;
-import org.springframework.context.ApplicationContext;
 import org.springframework.core.annotation.AnnotationUtils;
 import org.springframework.util.Assert;
 import org.springframework.util.ObjectUtils;
 
 import javax.annotation.PostConstruct;
-import javax.annotation.Resource;
 import java.util.*;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
@@ -26,10 +26,9 @@ import java.util.stream.Collectors;
  */
 public abstract class GaussChain<T> {
 
-    @Resource
-    private ApplicationContext context;
-
     private List<T> modules;
+
+    private final AtomicBoolean isInitialed = new AtomicBoolean(false);
 
     // strongly recommend returning a copy of operations instead of original one
     public final List<T> getModules() {
@@ -54,14 +53,13 @@ public abstract class GaussChain<T> {
                 .collect(Collectors.toList());
     }
 
-    @PostConstruct
     private void moduleInitialization() {
         Class<?> chainTypeClass = getClass();
         while (!ObjectUtils.isEmpty(chainTypeClass)) {
             if (chainTypeClass.equals(GaussFactory.class)) {
                 return;
             }
-            Map<Integer, T> container = capContainer(chainTypeClass);
+            Map<Integer, T> container = getModuleContainer(chainTypeClass);
             if (!ObjectUtils.isEmpty(container)) {
                 modules = sortModule(container);
                 break;
@@ -70,16 +68,23 @@ public abstract class GaussChain<T> {
         }
     }
 
+    public void init () {
+        if (!isInitialed.get()) {
+            moduleInitialization();
+            isInitialed.set(Boolean.TRUE);
+        }
+    }
+
     @SuppressWarnings("unchecked")
-    private Map<Integer, T> capContainer (Class<?> chainClass) {
+    private Map<Integer, T> getModuleContainer (Class<?> chainClass) {
         // get all classes with specific annotation
         // notice: this method will get different results(based on different version of spring boot)
-        Map<String, Object> modulesWithChainsMap = context.getBeansWithAnnotation(Chains.class);
+        Map<String, Object> modulesWithChainsMap = GaussBeanFactory.getBeansWithAnnotation(Chains.class);
 
         Map<Integer, T> container = Maps.newHashMapWithExpectedSize(modulesWithChainsMap.size());
         modulesWithChainsMap.values().forEach(m -> chainsAnnotationCap(chainClass,  container, (T)m));
 
-        Map<String, Object> modulesWithChainMap = context.getBeansWithAnnotation(Chain.class);
+        Map<String, Object> modulesWithChainMap = GaussBeanFactory.getBeansWithAnnotation(Chain.class);
         modulesWithChainMap.values().forEach(m -> {
             Chain chain = AnnotationUtils.findAnnotation(m.getClass(), Chain.class);
             if (ObjectUtils.isEmpty(chain)) {

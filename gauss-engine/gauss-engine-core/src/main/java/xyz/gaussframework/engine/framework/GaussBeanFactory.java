@@ -1,8 +1,13 @@
 package xyz.gaussframework.engine.framework;
 
+import org.junit.jupiter.api.Order;
+import org.springframework.core.Ordered;
 import xyz.gaussframework.engine.exception.GaussFactoryException;
+import xyz.gaussframework.engine.factory.Creator;
+import xyz.gaussframework.engine.factory.GaussChain;
 import xyz.gaussframework.engine.infrastructure.aspect.GaussCacheAspect;
 import com.google.common.collect.Maps;
+import xyz.gaussframework.engine.infrastructure.listener.GaussEvent;
 import xyz.gaussframework.engine.util.GaussFactoryUtil;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -14,6 +19,7 @@ import org.springframework.context.ApplicationContextException;
 import org.springframework.lang.NonNull;
 import org.springframework.util.ObjectUtils;
 
+import java.lang.annotation.Annotation;
 import java.lang.reflect.Constructor;
 import java.util.*;
 import java.util.function.Consumer;
@@ -32,6 +38,7 @@ import java.util.function.Consumer;
  * @see org.springframework.context.ApplicationContextAware
  * @since 4/3/2022
  */
+@Order(Ordered.HIGHEST_PRECEDENCE)
 public class GaussBeanFactory implements ApplicationContextAware {
 
     private static final Log logger = LogFactory.getLog(GaussCacheAspect.class);
@@ -60,6 +67,10 @@ public class GaussBeanFactory implements ApplicationContextAware {
             logger.error("GaussBeanFactory is not ready yet...");
             throw new ApplicationContextException("GaussBeanFactory cannot get required bean....") ;
         }
+    }
+
+    public static Map<String, Object> getBeansWithAnnotation (Class<? extends Annotation> annotationClass) {
+        return context.getBeansWithAnnotation(annotationClass);
     }
 
     /**
@@ -216,5 +227,7 @@ public class GaussBeanFactory implements ApplicationContextAware {
     public void setApplicationContext(@NonNull ApplicationContext applicationContext)
             throws BeansException {
         context = applicationContext;
+        // publish listener for gauss chain
+        context.publishEvent(new GaussEvent(getBeansWithAnnotation(Creator.class)));
     }
 }
