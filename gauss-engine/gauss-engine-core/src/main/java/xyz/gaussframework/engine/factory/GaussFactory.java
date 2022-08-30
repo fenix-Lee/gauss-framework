@@ -42,7 +42,7 @@ public abstract class GaussFactory<T, R> extends GaussChain<T>
     public GaussFactory<T, R> clone() {
         try {
             GaussFactory<T, R> copy = (GaussFactory<T, R>) super.clone();
-            copy.setModules(getModules());
+            copy.init();
             return copy;
         } catch (CloneNotSupportedException e) {
             throw new AssertionError();
