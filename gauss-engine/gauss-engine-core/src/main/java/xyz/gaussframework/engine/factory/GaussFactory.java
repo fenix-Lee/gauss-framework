@@ -12,7 +12,7 @@ import java.util.stream.Collectors;
  * chain classes
  *
  * @author Chang Su
- * @version 1.0
+ * @version 2.3
  * @since 4/5/2022
  * @param <T> chain type
  * @param <R> result type
