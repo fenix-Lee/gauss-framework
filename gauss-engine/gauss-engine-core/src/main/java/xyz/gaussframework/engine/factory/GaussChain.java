@@ -1,7 +1,6 @@
 package xyz.gaussframework.engine.factory;
 
 import com.google.common.collect.Maps;
-import org.springframework.context.ApplicationEvent;
 import xyz.gaussframework.engine.framework.GaussBeanFactory;
 import xyz.gaussframework.engine.exception.GaussFactoryException;
 import xyz.gaussframework.engine.framework.Chain;
@@ -10,7 +9,6 @@ import org.springframework.core.annotation.AnnotationUtils;
 import org.springframework.util.Assert;
 import org.springframework.util.ObjectUtils;
 
-import javax.annotation.PostConstruct;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Consumer;
@@ -37,16 +35,12 @@ public abstract class GaussChain<T> {
 
     private List<T> copyModules() {
         if (ObjectUtils.isEmpty(modules)) {
-            return null;
+            // avoid NullPointException
+            return Collections.emptyList();
         }
         return modules.stream()
                 .map(GaussBeanFactory::copyObject)
                 .collect(Collectors.toList());
-    }
-
-    @SuppressWarnings("unused")
-    protected final void setModules(List<T> modules) {
-        this.modules = modules;
     }
 
     private List<T> sortModule(Map<Integer, T> container) {

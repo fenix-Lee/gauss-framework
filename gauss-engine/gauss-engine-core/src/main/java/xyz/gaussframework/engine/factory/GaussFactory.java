@@ -12,7 +12,7 @@ import java.util.stream.Collectors;
  * chain classes
  *
  * @author Chang Su
- * @version 1.0
+ * @version 2.3
  * @since 4/5/2022
  * @param <T> chain type
  * @param <R> result type
@@ -42,7 +42,7 @@ public abstract class GaussFactory<T, R> extends GaussChain<T>
     public GaussFactory<T, R> clone() {
         try {
             GaussFactory<T, R> copy = (GaussFactory<T, R>) super.clone();
-            copy.setModules(getModules());
+            copy.init();
             return copy;
         } catch (CloneNotSupportedException e) {
             throw new AssertionError();

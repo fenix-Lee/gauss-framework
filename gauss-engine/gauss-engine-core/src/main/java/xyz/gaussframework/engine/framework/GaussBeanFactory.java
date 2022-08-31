@@ -1,8 +1,5 @@
 package xyz.gaussframework.engine.framework;
 
-import com.google.common.collect.Lists;
-import org.junit.jupiter.api.Order;
-import org.springframework.core.Ordered;
 import xyz.gaussframework.engine.exception.GaussFactoryException;
 import xyz.gaussframework.engine.factory.Creator;
 import xyz.gaussframework.engine.infrastructure.aspect.GaussCacheAspect;
@@ -33,12 +30,11 @@ import java.util.function.Consumer;
  * singleton by default if context is from Spring framework</b>
  *
  * @author Chang Su
- * @version 2.1
+ * @version 2.3
  * @see ApplicationContext
  * @see org.springframework.context.ApplicationContextAware
  * @since 4/3/2022
  */
-@Order(Ordered.HIGHEST_PRECEDENCE)
 public class GaussBeanFactory implements ApplicationContextAware {
 
     private static final Log logger = LogFactory.getLog(GaussCacheAspect.class);
@@ -46,8 +42,6 @@ public class GaussBeanFactory implements ApplicationContextAware {
     private static ApplicationContext context;
 
     private static final List<Class<?>> CLONEABLE_CLASS = new ArrayList<>();
-
-    private static final List<Object> REGISTERS = Lists.newArrayList();
 
     private static final Map<Class<?>, Object> OBJECT_CACHE = Maps.newConcurrentMap();
 

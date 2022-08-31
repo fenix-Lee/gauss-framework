@@ -20,7 +20,7 @@ public enum GaussFactoryGenerator {
 
     public <T> T getFactory(Class<T> clazz) {
         if (!GaussFactoryUtil.checkIfFactory(clazz)) {
-            throw new IllegalArgumentException(" cannot create non-factory class in factory generator");
+            throw new IllegalArgumentException(" cannot create non-factory class in Gauss factory generator");
         }
 
         Creator creatorAnnotation = AnnotationUtils.findAnnotation(clazz, Creator.class);
