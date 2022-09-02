@@ -1,6 +1,7 @@
 # Gauss Framework 
 [![][maven img]][maven]
 [![][license img]][license]
+[![Build Status](https://github.com/fenix-Lee/gauss-framework/actions/workflows/maven.yml/badge.svg)](https://github.com/fenix-Lee/gauss-framework/actions)
 
 Gauss Engine is a framework designed for Spring-Boot based Java project development that includes bean-copy with custom convertor for specific field, bean-achievement and design-pattern adoption.
 
