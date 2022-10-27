@@ -26,7 +26,7 @@ import java.util.Set;
  * {@code Cloneable}
  *
  * @author Chang Su
- * @version 2.1
+ * @version 2.2
  * @since 4/3/2022
  */
 public class GaussBeanMapper {
@@ -43,7 +43,7 @@ public class GaussBeanMapper {
     private void init() {
         ConverterFactory converterFactory = MAPPER_FACTORY.getConverterFactory();
         // register convertor
-        converterFactory.registerConverter(new CloneableConverter(GaussBeanFactory.getCloneableClass()));
+//        converterFactory.registerConverter(new CloneableConverter(GaussBeanFactory.getCloneableClass()));
         TAG_MAP.forEach((k, v) -> v.stream().filter(t -> !t.equals("default"))
                 .forEach(t -> registerGaussConvertor(k, t, converterFactory)));
         // register mapping
@@ -52,6 +52,7 @@ public class GaussBeanMapper {
                     engine.getTargetType(), engine.getFieldAnnotatedMetaData()));
         }
         // register custom object factory
+//        MAPPER_FACTORY.build();
     }
 
     private void registerGaussConvertor (Class<?> processorClass, String tag, ConverterFactory factory) {

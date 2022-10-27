@@ -25,12 +25,11 @@ import java.util.function.Consumer;
  * GaussBeanFactory is a new dynamic way to acquire bean from Application Context(not only
  * assigned from Spring) as a utility tool. Furthermore, it has been enhanced by a
  * capability of "object copy".
- *
  * <b>Please use wisely of {@link GaussBeanFactory#getBean} method coz it gives you the
  * singleton by default if context is from Spring framework</b>
  *
  * @author Chang Su
- * @version 2.3
+ * @version 2.4
  * @see ApplicationContext
  * @see org.springframework.context.ApplicationContextAware
  * @since 4/3/2022

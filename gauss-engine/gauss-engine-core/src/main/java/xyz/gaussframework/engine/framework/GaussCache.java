@@ -7,7 +7,8 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 
 /**
- *
+ * Annotation for local cache to store method return-value for 30 seconds by default(may change within this annotation)
+ * remember this annotation cannot guarantee data consistence
  *
  * @author Chang Su
  * @version 1.0

@@ -17,8 +17,7 @@ import java.util.stream.Collectors;
  * @param <T> chain type
  * @param <R> result type
  */
-public abstract class GaussFactory<T, R> extends GaussChain<T>
-        implements DomainFactory<T, R>, Cloneable {
+public abstract class GaussFactory<T, R> extends GaussChain<T> implements DomainFactory<T, R>, Cloneable {
 
     @SuppressWarnings("unused")
     public List<T> produce() {
