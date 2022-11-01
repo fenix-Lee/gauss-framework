@@ -1,5 +1,7 @@
 package xyz.gaussframework.engine.framework;
 
+import ma.glasnost.orika.ObjectFactory;
+import ma.glasnost.orika.metadata.TypeFactory;
 import xyz.gaussframework.engine.exception.GaussMapperException;
 import xyz.gaussframework.engine.infrastructure.DefaultProcessor;
 import xyz.gaussframework.engine.infrastructure.FieldEngine;
@@ -16,10 +18,7 @@ import org.springframework.util.ObjectUtils;
 import xyz.gaussframework.engine.util.GaussClassTypeUtil;
 
 import javax.annotation.PostConstruct;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 /**
  * Not only does {@link GaussBeanMapper} copy all fields from one class to another, but does copy object same with
@@ -40,10 +39,11 @@ public class GaussBeanMapper {
     private static final Map<Class<?>, Set<String>> TAG_MAP = Maps.newConcurrentMap();
 
     @PostConstruct
+    @SuppressWarnings("unchecked")
     private void init() {
         ConverterFactory converterFactory = MAPPER_FACTORY.getConverterFactory();
         // register convertor
-//        converterFactory.registerConverter(new CloneableConverter(GaussBeanFactory.getCloneableClass()));
+        converterFactory.registerConverter(new CloneableConverter(GaussBeanFactory.getCloneableClass()));
         TAG_MAP.forEach((k, v) -> v.stream().filter(t -> !t.equals("default"))
                 .forEach(t -> registerGaussConvertor(k, t, converterFactory)));
         // register mapping
@@ -52,7 +52,13 @@ public class GaussBeanMapper {
                     engine.getTargetType(), engine.getFieldAnnotatedMetaData()));
         }
         // register custom object factory
-//        MAPPER_FACTORY.build();
+        Arrays.stream(GaussBeanFactory.getRegistrableClass())
+                .forEach(r -> MAPPER_FACTORY
+                        .registerObjectFactory(Targeter
+                                        .getProxyInstance(new Target.GaussTarget<>(ObjectFactory.class, "object factory"),
+                                                InvocationHandlerFactory
+                                                .createRegistryHandler()),
+                        TypeFactory.valueOf(r)));
     }
 
     private void registerGaussConvertor (Class<?> processorClass, String tag, ConverterFactory factory) {

@@ -18,7 +18,7 @@ class GaussConversionFactory implements FactoryBean<Object> {
     @SuppressWarnings("unchecked")
     <T> T getTarget() {
         return (T) new Targeter.GaussTargeter()
-                .target(new Target.GaussCodedTarget<>(type, name));
+                .target(new Target.GaussTarget<>(type, name));
     }
 
     interface GaussCustomConvertor {

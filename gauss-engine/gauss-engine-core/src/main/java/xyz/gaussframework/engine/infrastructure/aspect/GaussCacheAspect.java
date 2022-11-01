@@ -2,6 +2,7 @@ package xyz.gaussframework.engine.infrastructure.aspect;
 
 import lombok.Getter;
 import org.aspectj.lang.JoinPoint;
+import org.springframework.util.ConcurrentReferenceHashMap;
 import xyz.gaussframework.engine.framework.GaussBeanFactory;
 import xyz.gaussframework.engine.framework.GaussCache;
 import org.apache.commons.logging.Log;
@@ -21,7 +22,6 @@ import org.springframework.util.ObjectUtils;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
 /**
@@ -36,13 +36,13 @@ public class GaussCacheAspect {
 
     private static final Log logger = LogFactory.getLog(GaussCacheAspect.class);
 
-    private static final int LRU_SIZE = 5;
+    private static final int LRU_SIZE = 4;
 
     private static final long DEFAULT_EXPIRED_TIME = 30000;
 
     private static final GaussCacheContext CONTEXT = new GaussCacheContext(LRU_SIZE);
 
-    private static final Map<Method, GaussCacheConfig> CONFIG = new ConcurrentHashMap<>();
+    private static final Map<Method, GaussCacheConfig> CONFIG = new ConcurrentReferenceHashMap<>(LRU_SIZE);
 
     @Pointcut("@annotation(xyz.gaussframework.engine.framework.GaussCache)")
     public void cachePointcut() {}
@@ -60,11 +60,8 @@ public class GaussCacheAspect {
         }
 
         Object result = joinPoint.proceed();
-        if (ObjectUtils.isEmpty(result)) {
-            return result;
-        }
         synchronized (CONTEXT) {
-            CONTEXT.put(key, GaussContent.store(result));
+            CONTEXT.putIfAbsent(key, GaussContent.store(result));
         }
         setTimer(proxyMethod);
         return result;
@@ -99,7 +96,7 @@ public class GaussCacheAspect {
                 key = prefix + "::" + resolveExp(new DefaultParameterNameDiscoverer().getParameterNames(proxyMethod),
                         gaussCacheAnnotation.key(), joinPoint.getArgs());
             } catch (Exception e) {
-                logger.error("");
+                logger.error("resolve expression failed: " + e.getMessage());
                 key = prefix + "::" + resolveExp(new String[]{"id"}, null, new Object[]{UUID.randomUUID()});
             }
             CONFIG.putIfAbsent(proxyMethod, GaussCacheConfig.create(gaussCacheAnnotation, key));
@@ -142,7 +139,7 @@ public class GaussCacheAspect {
         }
 
         public Object getReference() {
-            return GaussBeanFactory.copyObject(reference);
+            return ObjectUtils.isEmpty(reference)? reference : GaussBeanFactory.copyObject(reference);
         }
     }
 
@@ -156,7 +153,7 @@ public class GaussCacheAspect {
                     CONTEXT.remove(config.getCacheKey());
                 }
             }
-        }, getExpire(((GaussCache)config.getGaussCache()).expire()));
+        }, getExpire(config.getExpiredTime()));
     }
 
     @Getter
@@ -173,6 +170,10 @@ public class GaussCacheAspect {
 
         public static GaussCacheConfig create(Annotation annotation, String cacheKey) {
             return new GaussCacheConfig(annotation, cacheKey);
+        }
+
+        public long getExpiredTime() {
+            return ((GaussCache)gaussCache).expire();
         }
     }
 }

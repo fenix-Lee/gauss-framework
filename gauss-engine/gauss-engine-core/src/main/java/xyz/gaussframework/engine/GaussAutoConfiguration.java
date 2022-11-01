@@ -1,10 +1,7 @@
 package xyz.gaussframework.engine;
 
 import org.springframework.context.annotation.*;
-import xyz.gaussframework.engine.framework.BeanCloneableProcessor;
-import xyz.gaussframework.engine.framework.BeanMapperProcessor;
-import xyz.gaussframework.engine.framework.GaussBeanFactory;
-import xyz.gaussframework.engine.framework.GaussBeanMapper;
+import xyz.gaussframework.engine.framework.*;
 import xyz.gaussframework.engine.infrastructure.aspect.GaussCacheAspect;
 
 @Configuration
@@ -13,6 +10,7 @@ import xyz.gaussframework.engine.infrastructure.aspect.GaussCacheAspect;
 @Import({GaussBeanFactory.class,
         GaussBeanMapper.class,
         BeanCloneableProcessor.class,
+        BeanRegisterProcessor.class,
         BeanMapperProcessor.class})
 public class GaussAutoConfiguration {
 

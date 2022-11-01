@@ -1,5 +1,6 @@
 package xyz.gaussframework.engine.framework;
 
+import com.google.common.collect.Sets;
 import xyz.gaussframework.engine.exception.GaussFactoryException;
 import xyz.gaussframework.engine.factory.Creator;
 import xyz.gaussframework.engine.infrastructure.aspect.GaussCacheAspect;
@@ -40,7 +41,9 @@ public class GaussBeanFactory implements ApplicationContextAware {
 
     private static ApplicationContext context;
 
-    private static final List<Class<?>> CLONEABLE_CLASS = new ArrayList<>();
+    private static final Set<Class<?>> CLONEABLE_CLASS = Sets.newConcurrentHashSet();
+
+    private static final Set<Class<?>> REGISTRABLE_CLASS = Sets.newConcurrentHashSet();
 
     private static final Map<Class<?>, Object> OBJECT_CACHE = Maps.newConcurrentMap();
 
@@ -179,13 +182,19 @@ public class GaussBeanFactory implements ApplicationContextAware {
     }
 
     static void addCloneableClazz(Class<?> clazz) {
-        if (CLONEABLE_CLASS.contains(clazz))
-            return;
         CLONEABLE_CLASS.add(clazz);
+    }
+
+    static void addRegistrableClazz(Class<?> clazz) {
+        REGISTRABLE_CLASS.add(clazz);
     }
 
     static Class<?>[] getCloneableClass() {
         return CLONEABLE_CLASS.toArray(new Class<?>[0]);
+    }
+
+    static Class<?>[] getRegistrableClass() {
+        return REGISTRABLE_CLASS.toArray(new Class[0]);
     }
 
     public static boolean isReady() {
