@@ -1,6 +1,5 @@
 package xyz.gaussframework.engine.framework;
 
-import xyz.gaussframework.engine.infrastructure.DefaultProcessor;
 import xyz.gaussframework.engine.infrastructure.FieldEngine;
 import xyz.gaussframework.engine.infrastructure.FieldMetaData;
 import com.google.common.collect.Lists;
@@ -50,6 +49,11 @@ public class BeanMapperProcessor implements BeanPostProcessor {
         return bean;
     }
 
+    /**
+     * get all fields from source type
+     * @param source source type
+     * @return all fields including ones in super class
+     */
     private Field[] findAllFields (Class<?> source) {
         List<Field> fields = Lists.newArrayList(source.getDeclaredFields());
         Class<?> superClass = source.getSuperclass();
@@ -60,15 +64,15 @@ public class BeanMapperProcessor implements BeanPostProcessor {
         return fields.toArray(new Field[0]);
     }
 
-    private static class GaussFieldEngine implements FieldEngine {
+    static class GaussFieldEngine implements FieldEngine {
 
         private final Class<?> sourceType;
 
         private final Class<?> targetType;
 
-        private Map<String, List<FieldMetaData<?>>> fieldMetaData;
+        protected Map<String, List<FieldMetaData<?>>> fieldMetaData;
 
-        private GaussFieldEngine(Class<?> sourceType, Class<?> targetType) {
+        GaussFieldEngine(Class<?> sourceType, Class<?> targetType) {
             this.sourceType = sourceType;
             this.targetType = targetType;
         }
@@ -144,7 +148,7 @@ public class BeanMapperProcessor implements BeanPostProcessor {
             this.targetFields = targetFields;
             this.processorType = processorType;
             this.tag = tag;
-            if (!processorType.equals(DefaultProcessor.class)) {
+            if (!processorType.equals(Object.class)) {
                 GaussBeanMapper.addTag(processorType, tag);
             }
         }

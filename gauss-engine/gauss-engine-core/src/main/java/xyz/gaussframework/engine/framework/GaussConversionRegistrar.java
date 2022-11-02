@@ -63,7 +63,8 @@ class GaussConversionRegistrar implements ImportBeanDefinitionRegistrar,
         AnnotationTypeFilter annotationTypeFilter = new AnnotationTypeFilter(GaussConvertor.class);
         scanner.addIncludeFilter(annotationTypeFilter);
         basePackages = getBasePackages(metadata, Objects.requireNonNull(attrs));
-        basePackages.remove("xyz.gaussframework.engine"); // filter default convertor from base packages
+        basePackages.add("xyz.gaussframework.engine");
+//        basePackages.remove("xyz.gaussframework.engine"); // filter default convertor from base packages
         for (String basePackage : basePackages) {
             Set<BeanDefinition> candidateComponents = scanner.findCandidateComponents(basePackage);
             for (BeanDefinition candidateComponent : candidateComponents) {

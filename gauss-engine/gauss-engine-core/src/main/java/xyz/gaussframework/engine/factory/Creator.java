@@ -16,7 +16,6 @@ import java.lang.annotation.*;
 @Documented
 @Inherited
 @Component
-@OverrideClone
 public @interface Creator {
 
     /**

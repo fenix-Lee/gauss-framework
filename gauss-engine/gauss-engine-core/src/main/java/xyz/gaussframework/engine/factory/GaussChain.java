@@ -1,5 +1,6 @@
 package xyz.gaussframework.engine.factory;
 
+import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import xyz.gaussframework.engine.framework.GaussBeanFactory;
 import xyz.gaussframework.engine.exception.GaussFactoryException;
@@ -36,7 +37,7 @@ public abstract class GaussChain<T> {
     private List<T> copyModules() {
         if (ObjectUtils.isEmpty(modules)) {
             // avoid NullPointException
-            return Collections.emptyList();
+            return Lists.newArrayList();
         }
         return modules.stream()
                 .map(GaussBeanFactory::copyObject)

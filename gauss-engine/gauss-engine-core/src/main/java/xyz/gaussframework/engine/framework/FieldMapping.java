@@ -1,7 +1,5 @@
 package xyz.gaussframework.engine.framework;
 
-import xyz.gaussframework.engine.infrastructure.DefaultProcessor;
-
 import java.lang.annotation.Target;
 import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;
@@ -36,11 +34,11 @@ public @interface FieldMapping {
      * for which two fields need to be converted by custom convertor
      * @return conversion processor
      */
-    Class<?> processor() default DefaultProcessor.class;
+    Class<?> processor() default Object.class;
 
     /**
      * which field should be used for conversion
      * @return the position of conversion implementation
      */
-    String tag() default "default";
+    String tag() default "";
 }

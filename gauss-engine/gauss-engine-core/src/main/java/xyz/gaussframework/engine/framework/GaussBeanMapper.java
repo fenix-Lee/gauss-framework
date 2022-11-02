@@ -1,16 +1,15 @@
 package xyz.gaussframework.engine.framework;
 
 import ma.glasnost.orika.ObjectFactory;
+import ma.glasnost.orika.converter.builtin.CloneableConverter;
 import ma.glasnost.orika.metadata.TypeFactory;
 import xyz.gaussframework.engine.exception.GaussMapperException;
-import xyz.gaussframework.engine.infrastructure.DefaultProcessor;
 import xyz.gaussframework.engine.infrastructure.FieldEngine;
 import xyz.gaussframework.engine.infrastructure.FieldMetaData;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import ma.glasnost.orika.MapperFactory;
 import ma.glasnost.orika.converter.ConverterFactory;
-import ma.glasnost.orika.converter.builtin.CloneableConverter;
 import ma.glasnost.orika.impl.DefaultMapperFactory;
 import ma.glasnost.orika.metadata.ClassMapBuilder;
 import org.springframework.lang.Nullable;
@@ -43,9 +42,8 @@ public class GaussBeanMapper {
     private void init() {
         ConverterFactory converterFactory = MAPPER_FACTORY.getConverterFactory();
         // register convertor
-        converterFactory.registerConverter(new CloneableConverter(GaussBeanFactory.getCloneableClass()));
-        TAG_MAP.forEach((k, v) -> v.stream().filter(t -> !t.equals("default"))
-                .forEach(t -> registerGaussConvertor(k, t, converterFactory)));
+//        converterFactory.registerConverter(new CloneableConverter(GaussBeanFactory.getCloneableClass()));
+        TAG_MAP.forEach((k, v) -> v.forEach(t -> registerGaussConvertor(k, t, converterFactory)));
         // register mapping
         if (!FIELD_ENGINES.isEmpty()) {
             FIELD_ENGINES.forEach(engine -> registerMetaData(engine.getSourceType(),
@@ -58,7 +56,7 @@ public class GaussBeanMapper {
                                         .getProxyInstance(new Target.GaussTarget<>(ObjectFactory.class, "object factory"),
                                                 InvocationHandlerFactory
                                                 .createRegistryHandler()),
-                        TypeFactory.valueOf(r)));
+                        TypeFactory.valueOf(r), TypeFactory.valueOf(r)));
     }
 
     private void registerGaussConvertor (Class<?> processorClass, String tag, ConverterFactory factory) {
@@ -149,8 +147,7 @@ public class GaussBeanMapper {
         ClassMapBuilder<S, D> classMapBuilder = MAPPER_FACTORY.classMap(sourceType, targetType);
         for (Map.Entry<String, List<FieldMetaData<?>>> entry : fieldMaps.entrySet()) {
             for (FieldMetaData<?> metaData : entry.getValue()) {
-                if (ObjectUtils.isEmpty(metaData.getProcessorType())
-                        || metaData.getProcessorType().equals(DefaultProcessor.class)) {
+                if (metaData.getProcessorType().equals(Object.class)) {
                     for (String targetField : metaData.getTargetFields()) {
                         classMapBuilder = classMapBuilder.field(entry.getKey(), targetField);
                     }

@@ -93,6 +93,9 @@ public class GaussBeanFactory implements ApplicationContextAware {
         return obj;
     }
 
+    public static boolean containsBean(String beanName) {
+        return context.containsBean(beanName) || context.containsBeanDefinition(beanName);
+    }
     static <T> T getObject(Class<T> clazz) {
         return context.getBean(clazz);
     }
