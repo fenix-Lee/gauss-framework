@@ -1,5 +1,6 @@
 package xyz.gaussframework.engine.framework;
 
+import org.springframework.util.ObjectUtils;
 import xyz.gaussframework.engine.exception.GaussFactoryException;
 import xyz.gaussframework.engine.factory.Creator;
 import xyz.gaussframework.engine.factory.GaussFactory;
@@ -35,6 +36,9 @@ public enum GaussFactoryGenerator {
             }
             throw new GaussFactoryException("Gauss factory generator is not ready");
         }
-        return GaussBeanFactory.copyObject(GaussBeanFactory.getObject(clazz));
+        T factory = GaussBeanFactory.copyObject(GaussBeanFactory.getObject(clazz));
+        Assert.isTrue(!ObjectUtils.isEmpty(factory), "Failed to generate factory....");
+        ((GaussFactory<?,?>)factory).init();
+        return factory;
     }
 }

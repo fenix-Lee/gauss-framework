@@ -17,7 +17,7 @@ import java.util.stream.Collectors;
  * @param <T> chain type
  * @param <R> result type
  */
-public abstract class GaussFactory<T, R> extends GaussChain<T> implements DomainFactory<T, R>, Cloneable {
+public abstract class GaussFactory<T, R> extends GaussChain<T> implements DomainFactory<T, R> {
 
     @SuppressWarnings("unused")
     public List<T> produce() {
@@ -34,17 +34,5 @@ public abstract class GaussFactory<T, R> extends GaussChain<T> implements Domain
     @Override
     public R manufacture(@NonNull Function<List<T>, ? extends R> mapper) {
         return mapper.apply(getModules());
-    }
-
-    @Override
-    @SuppressWarnings("unchecked")
-    public GaussFactory<T, R> clone() {
-        try {
-            GaussFactory<T, R> copy = (GaussFactory<T, R>) super.clone();
-            copy.init();
-            return copy;
-        } catch (CloneNotSupportedException e) {
-            throw new AssertionError();
-        }
     }
 }

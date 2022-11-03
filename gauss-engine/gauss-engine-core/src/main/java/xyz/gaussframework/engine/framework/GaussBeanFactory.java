@@ -126,7 +126,7 @@ public class GaussBeanFactory implements ApplicationContextAware {
         }
         Constructor<T>[] ctors = (Constructor<T>[]) clazz.getDeclaredConstructors();
         Class<?>[] argTypes = (Class<?>[]) Arrays.stream(args)
-                .map(Object::getClass).toArray();
+                .map(Object::getClass).toArray(Class[]::new);
         Optional<Constructor<T>> properCtor = Arrays.stream(ctors)
                 .filter(c -> filterConstructors(c.getParameterTypes(), argTypes))
                 .findAny();

@@ -2,6 +2,8 @@ package xyz.gaussframework.engine.factory;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import lombok.AccessLevel;
+import lombok.Setter;
 import xyz.gaussframework.engine.framework.GaussBeanFactory;
 import xyz.gaussframework.engine.exception.GaussFactoryException;
 import xyz.gaussframework.engine.framework.Chain;
@@ -11,7 +13,6 @@ import org.springframework.util.Assert;
 import org.springframework.util.ObjectUtils;
 
 import java.util.*;
-import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
@@ -25,9 +26,10 @@ import java.util.stream.Collectors;
  */
 public abstract class GaussChain<T> {
 
+    @Setter
     private List<T> modules;
 
-    private final AtomicBoolean isInitialed = new AtomicBoolean(false);
+    private volatile boolean isInitialed;
 
     // strongly recommend returning a copy of operations instead of original one
     public final List<T> getModules() {
@@ -51,7 +53,14 @@ public abstract class GaussChain<T> {
                 .collect(Collectors.toList());
     }
 
-    private void moduleInitialization() {
+    private synchronized void moduleInitialization() {
+        if (!ObjectUtils.isEmpty(modules)) {
+            isInitialed = true;
+            return;
+        }
+        if (isInitialed) {
+            return;
+        }
         Class<?> chainTypeClass = getClass();
         while (!ObjectUtils.isEmpty(chainTypeClass)) {
             if (chainTypeClass.equals(GaussFactory.class)) {
@@ -67,9 +76,9 @@ public abstract class GaussChain<T> {
     }
 
     public void init () {
-        if (!isInitialed.get()) {
+        if (!isInitialed) {
             moduleInitialization();
-            isInitialed.set(Boolean.TRUE);
+            isInitialed = true;
         }
     }
 
