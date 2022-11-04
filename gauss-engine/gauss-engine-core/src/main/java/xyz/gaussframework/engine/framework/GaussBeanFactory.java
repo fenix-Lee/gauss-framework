@@ -1,6 +1,5 @@
 package xyz.gaussframework.engine.framework;
 
-import com.google.common.collect.Sets;
 import xyz.gaussframework.engine.exception.GaussFactoryException;
 import xyz.gaussframework.engine.factory.Creator;
 import xyz.gaussframework.engine.infrastructure.aspect.GaussCacheAspect;
@@ -41,10 +40,6 @@ public class GaussBeanFactory implements ApplicationContextAware {
 
     private static ApplicationContext context;
 
-    private static final Set<Class<?>> CLONEABLE_CLASS = Sets.newConcurrentHashSet();
-
-    private static final Set<Class<?>> REGISTRABLE_CLASS = Sets.newConcurrentHashSet();
-
     private static final Map<Class<?>, Object> OBJECT_CACHE = Maps.newConcurrentMap();
 
     /**
@@ -78,6 +73,7 @@ public class GaussBeanFactory implements ApplicationContextAware {
      * @param name name of the object
      * @return an instance of the object
      */
+    @SuppressWarnings("unused")
     public static Object getBean(String name) {
         if (!isReady()) {
             logger.error("GaussBeanFactory is not ready yet...");
@@ -182,22 +178,6 @@ public class GaussBeanFactory implements ApplicationContextAware {
            logger.error(e.getMessage());
         }
         return null;
-    }
-
-    static void addCloneableClazz(Class<?> clazz) {
-        CLONEABLE_CLASS.add(clazz);
-    }
-
-    static void addRegistrableClazz(Class<?> clazz) {
-        REGISTRABLE_CLASS.add(clazz);
-    }
-
-    static Class<?>[] getCloneableClass() {
-        return CLONEABLE_CLASS.toArray(new Class<?>[0]);
-    }
-
-    static Class<?>[] getRegistrableClass() {
-        return REGISTRABLE_CLASS.toArray(new Class[0]);
     }
 
     public static boolean isReady() {

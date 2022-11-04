@@ -9,7 +9,6 @@ import xyz.gaussframework.engine.infrastructure.aspect.GaussCacheAspect;
 @EnableAspectJAutoProxy
 @Import({GaussBeanFactory.class,
         GaussBeanMapper.class,
-        BeanCloneableProcessor.class,
         BeanRegisterProcessor.class,
         BeanMapperProcessor.class})
 public class GaussAutoConfiguration {

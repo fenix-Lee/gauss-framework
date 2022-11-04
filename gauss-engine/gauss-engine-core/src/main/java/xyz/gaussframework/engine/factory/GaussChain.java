@@ -2,7 +2,6 @@ package xyz.gaussframework.engine.factory;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
-import lombok.AccessLevel;
 import lombok.Setter;
 import xyz.gaussframework.engine.framework.GaussBeanFactory;
 import xyz.gaussframework.engine.exception.GaussFactoryException;

@@ -36,7 +36,7 @@ public class GaussCacheAspect {
 
     private static final Log logger = LogFactory.getLog(GaussCacheAspect.class);
 
-    private static final int LRU_SIZE = 4;
+    private static final int LRU_SIZE = 8;
 
     private static final long DEFAULT_EXPIRED_TIME = 30000;
 

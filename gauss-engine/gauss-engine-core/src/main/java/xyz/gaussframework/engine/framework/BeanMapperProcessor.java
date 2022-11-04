@@ -16,7 +16,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- *
+ * Mapping processor for all selected candidates if they are annotated with {@code Mapper} and/or {@code Mappers}
  *
  * @author Chang Su
  * @version 1.0
@@ -36,7 +36,7 @@ public class BeanMapperProcessor implements BeanPostProcessor {
             }
             GaussFieldEngine fieldEngine = GaussFieldEngine.fireUp(source, mapper.target());
             fieldEngine.setFieldMaps(findAllFields(source));
-            GaussBeanMapper.addFieldEngine(fieldEngine);
+            GaussBeanMapper.register(fieldEngine);
             return bean;
         }
 
@@ -44,7 +44,7 @@ public class BeanMapperProcessor implements BeanPostProcessor {
                 .forEach(m -> {
                     GaussFieldEngine fieldEngine = GaussFieldEngine.fireUp(source, m.target());
                     fieldEngine.setFieldMaps(findAllFields(source));
-                    GaussBeanMapper.addFieldEngine(fieldEngine);
+                    GaussBeanMapper.register(fieldEngine);
                 });
         return bean;
     }
@@ -149,7 +149,7 @@ public class BeanMapperProcessor implements BeanPostProcessor {
             this.processorType = processorType;
             this.tag = tag;
             if (!processorType.equals(Object.class)) {
-                GaussBeanMapper.addTag(processorType, tag);
+                GaussBeanMapper.registerConvertor(processorType, tag);
             }
         }
 

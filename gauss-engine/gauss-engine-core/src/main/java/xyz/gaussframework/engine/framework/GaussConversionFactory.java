@@ -21,7 +21,7 @@ class GaussConversionFactory implements FactoryBean<Object> {
                 .target(new Target.GaussTarget<>(type, name));
     }
 
-    interface GaussCustomConvertor {
+    public interface GaussCustomConvertor {
 
         default <S,D> Converter<S, D> getConvertor(String tag) {
             throw new GaussConvertorException("tag: " + tag + " must be casted by handler...");

@@ -23,10 +23,10 @@ public class BeanRegisterProcessor implements BeanPostProcessor {
         Arrays.stream(bean.getClass().getDeclaredFields())
                 .forEach(f -> {
                     if (f.isAnnotationPresent(Register.class)) {
-                        GaussBeanMapper.addTag(DefaultRegistryConvertor.class, "default");
+                        GaussBeanMapper.registerConvertor(DefaultRegistryConvertor.class, "default");
                         GaussRegistryFieldEngine fieldEngine = GaussRegistryFieldEngine.fireUp(bean.getClass(), bean.getClass());
                         fieldEngine.setFieldMaps(f.getName());
-                        GaussBeanMapper.addFieldEngine(fieldEngine);
+                        GaussBeanMapper.register(fieldEngine);
                     }
                 });
         return bean;
