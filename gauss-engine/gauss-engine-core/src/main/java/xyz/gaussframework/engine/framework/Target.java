@@ -7,13 +7,13 @@ interface Target<T> {
 
     String name();
 
-    class GaussCodedTarget<T> implements Target<T> {
+    class GaussTarget<T> implements Target<T> {
 
         private final Class<T> type;
 
         private final String name;
 
-        public GaussCodedTarget(Class<T> type, String name) {
+        public GaussTarget(Class<T> type, String name) {
             this.type = type;
             this.name = name;
         }
@@ -26,6 +26,20 @@ interface Target<T> {
         @Override
         public String name() {
             return name;
+        }
+    }
+
+    class GaussConversionTarget<T> extends GaussTarget<T> {
+
+        private final GaussConversion<Object,Object> conversion;
+
+        public GaussConversionTarget (Class<T> type, String name, GaussConversion<Object, Object> conversion) {
+            super(type, name);
+            this.conversion = conversion;
+        }
+
+        public GaussConversion<Object,Object> getConversion () {
+            return conversion;
         }
     }
 }

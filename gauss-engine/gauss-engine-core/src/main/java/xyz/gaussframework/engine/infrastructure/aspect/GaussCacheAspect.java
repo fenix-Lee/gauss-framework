@@ -1,5 +1,9 @@
 package xyz.gaussframework.engine.infrastructure.aspect;
 
+import lombok.Getter;
+import org.aspectj.lang.JoinPoint;
+import org.springframework.util.ConcurrentReferenceHashMap;
+import xyz.gaussframework.engine.framework.GaussBeanFactory;
 import xyz.gaussframework.engine.framework.GaussCache;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -11,18 +15,20 @@ import org.aspectj.lang.reflect.MethodSignature;
 import org.springframework.core.DefaultParameterNameDiscoverer;
 import org.springframework.expression.EvaluationContext;
 import org.springframework.expression.Expression;
-import org.springframework.expression.spel.SpelEvaluationException;
 import org.springframework.expression.spel.standard.SpelExpressionParser;
 import org.springframework.expression.spel.support.StandardEvaluationContext;
 import org.springframework.util.ObjectUtils;
 
+import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * Gauss Cache aspect class
+ *
  * @author Chang Su
- * @version 1.0
+ * @version 1.1
  * @since 7/7/2022
  */
 @Aspect
@@ -30,74 +36,72 @@ public class GaussCacheAspect {
 
     private static final Log logger = LogFactory.getLog(GaussCacheAspect.class);
 
-    private static final int LRU_SIZE = 5;
+    private static final int LRU_SIZE = 8;
 
     private static final long DEFAULT_EXPIRED_TIME = 30000;
 
     private static final GaussCacheContext CONTEXT = new GaussCacheContext(LRU_SIZE);
+
+    private static final Map<Method, GaussCacheConfig> CONFIG = new ConcurrentReferenceHashMap<>(LRU_SIZE);
 
     @Pointcut("@annotation(xyz.gaussframework.engine.framework.GaussCache)")
     public void cachePointcut() {}
 
     @Around("cachePointcut()")
     public Object cacheable(ProceedingJoinPoint joinPoint) throws Throwable {
-        Object result;
-
-        MethodSignature signature = (MethodSignature) joinPoint.getSignature();
-        Method proxyMethod;
-        try {
-            proxyMethod = joinPoint.getTarget().getClass()
-                    .getMethod(signature.getName(),signature.getMethod().getParameterTypes());
-        } catch (NoSuchMethodException e) {
-            return null;
-        }
+        Method proxyMethod = ((MethodSignature) joinPoint.getSignature()).getMethod();
         if (proxyMethod.getReturnType().equals(void.class)) {
             return null;
         }
 
-        GaussCache gaussCacheAnnotation = proxyMethod.getAnnotation(GaussCache.class);
-        String prefix =  gaussCacheAnnotation.prefix();
-        if (ObjectUtils.isEmpty(prefix)) {
-            prefix = joinPoint.getTarget().getClass().getName();
-        }
-        EvaluationContext context = new StandardEvaluationContext();
-        Object[] args = joinPoint.getArgs();
-        String key;
-        if (args.length != 0) {
-            String gaussCacheKey = gaussCacheAnnotation.key();
-            String[] parameterNames = new DefaultParameterNameDiscoverer().getParameterNames(proxyMethod);
-            if (!ObjectUtils.isEmpty(gaussCacheKey)) {
-                try {
-                    Expression expression = new SpelExpressionParser().parseExpression(gaussCacheKey);
-                    for (int i = 0; i < Objects.requireNonNull(parameterNames).length; i++) {
-                        context.setVariable(parameterNames[i],args[i]);
-                    }
-                    key = prefix + "::" + expression.getValue(context);
-                } catch (Exception e) {
-                    logger.error("GaussCache.key is not a springEL expression.....");
-                    key = "";
-                }
-            } else {
-                key = String.join(":", String.join("::", prefix, proxyMethod.getName()),
-                        String.join(":", Objects.requireNonNull(parameterNames)));
-            }
-        } else {
-            key = String.join("::", prefix, proxyMethod.getName());
-        }
+        String key = getKey(joinPoint, proxyMethod);
         if (!ObjectUtils.isEmpty(key) && CONTEXT.containsKey(key)) {
-
             return CONTEXT.get(key).getReference();
         }
 
-        result = joinPoint.proceed();
-        if (ObjectUtils.isEmpty(key)) {
-            return result;
-        }
+        Object result = joinPoint.proceed();
         synchronized (CONTEXT) {
-            CONTEXT.put(key, GaussContent.store(getExpire(gaussCacheAnnotation.expire()),
-                    key, result));
+            CONTEXT.putIfAbsent(key, GaussContent.store(result));
         }
+        setTimer(proxyMethod);
         return result;
+    }
+
+    @SuppressWarnings("unchecked")
+    private String resolveExp(String[] parameterNames, String expressionKey, Object[] args) {
+        if (ObjectUtils.isEmpty(expressionKey)) {
+            return String.join(":", parameterNames) + "::" +
+                    Arrays.stream(args).map(Object::toString)
+                    .collect(Collectors.joining(":"));
+        } else {
+            EvaluationContext context = new StandardEvaluationContext();
+            Expression expression = new SpelExpressionParser().parseExpression(expressionKey);
+            for (int i = 0; i < Objects.requireNonNull(parameterNames).length; i++) {
+                context.setVariable(parameterNames[i], args[i]);
+            }
+            return String.join(":", ((List<String>) Objects.requireNonNull(expression.getValue(context))));
+        }
+    }
+
+    private String getKey(JoinPoint joinPoint, Method proxyMethod) {
+        if (CONFIG.containsKey(proxyMethod)) {
+            return CONFIG.get(proxyMethod).getCacheKey();
+        } else {
+            GaussCache gaussCacheAnnotation = proxyMethod.getAnnotation(GaussCache.class);
+            String targetName = joinPoint.getTarget().getClass().getName();
+            String prefix = ObjectUtils.isEmpty(gaussCacheAnnotation.prefix())?
+                    targetName : gaussCacheAnnotation.prefix() + ":" + targetName;
+            String key;
+            try {
+                key = prefix + "::" + resolveExp(new DefaultParameterNameDiscoverer().getParameterNames(proxyMethod),
+                        gaussCacheAnnotation.key(), joinPoint.getArgs());
+            } catch (Exception e) {
+                logger.error("resolve expression failed: " + e.getMessage());
+                key = prefix + "::" + resolveExp(new String[]{"id"}, null, new Object[]{UUID.randomUUID()});
+            }
+            CONFIG.putIfAbsent(proxyMethod, GaussCacheConfig.create(gaussCacheAnnotation, key));
+            return key;
+        }
     }
 
     private long getExpire(long expire) {
@@ -130,25 +134,46 @@ public class GaussCacheAspect {
             this.reference = reference;
         }
 
-        public static GaussContent store(long time, String key, Object reference) {
-            setTimer(time, key);
+        public static GaussContent store(Object reference) {
             return new GaussContent(reference);
         }
 
         public Object getReference() {
-            return reference;
+            return ObjectUtils.isEmpty(reference)? reference : GaussBeanFactory.copyObject(reference);
+        }
+    }
+
+    private void setTimer(Method proxyMethod) {
+        GaussCacheConfig config = CONFIG.get(proxyMethod);
+        Timer timer = new Timer(true);
+        timer.schedule(new TimerTask() {
+            @Override
+            public void run() {
+                synchronized (CONTEXT) {
+                    CONTEXT.remove(config.getCacheKey());
+                }
+            }
+        }, getExpire(config.getExpiredTime()));
+    }
+
+    @Getter
+    static class GaussCacheConfig {
+
+        private final Annotation gaussCache;
+
+        private final String cacheKey;
+
+        GaussCacheConfig(Annotation annotation, String cacheKey) {
+            this.gaussCache = annotation;
+            this.cacheKey = cacheKey;
         }
 
-        private static void setTimer(long second, String key) {
-            Timer timer = new Timer(true);
-            timer.schedule(new TimerTask() {
-                @Override
-                public void run() {
-                    synchronized (CONTEXT) {
-                        CONTEXT.remove(key);
-                    }
-                }
-            }, second);
+        public static GaussCacheConfig create(Annotation annotation, String cacheKey) {
+            return new GaussCacheConfig(annotation, cacheKey);
+        }
+
+        public long getExpiredTime() {
+            return ((GaussCache)gaussCache).expire();
         }
     }
 }

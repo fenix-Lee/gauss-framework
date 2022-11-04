@@ -1,7 +1,6 @@
 package xyz.gaussframework.engine.infrastructure.listener;
 
 import org.springframework.context.ApplicationListener;
-import xyz.gaussframework.engine.factory.GaussChain;
 import xyz.gaussframework.engine.factory.GaussFactory;
 import xyz.gaussframework.engine.util.GaussClassTypeUtil;
 

@@ -1,12 +1,12 @@
 package xyz.gaussframework.engine.framework;
 
+import ma.glasnost.orika.Converter;
 import ma.glasnost.orika.metadata.Type;
 import org.springframework.util.Assert;
 
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
-import java.util.Map;
 
 class GaussConversionInvocationHandler implements InvocationHandler {
 
@@ -27,8 +27,8 @@ class GaussConversionInvocationHandler implements InvocationHandler {
                 return true;
             case "convert":
                 Assert.isTrue(args.length >= 2, "parameters are invalid.....");
-                if (target instanceof GaussConversionTarget) {
-                    return ((GaussConversionTarget<ma.glasnost.orika.Converter<Object,Object>>) target)
+                if (target instanceof Target.GaussConversionTarget) {
+                    return ((Target.GaussConversionTarget<Converter<Object,Object>>) target)
                             .getConversion()
                             .convert(args[0], (Type<Object>) args[1]);
                 }

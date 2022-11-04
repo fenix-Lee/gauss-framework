@@ -25,12 +25,11 @@ import java.util.function.Consumer;
  * GaussBeanFactory is a new dynamic way to acquire bean from Application Context(not only
  * assigned from Spring) as a utility tool. Furthermore, it has been enhanced by a
  * capability of "object copy".
- *
  * <b>Please use wisely of {@link GaussBeanFactory#getBean} method coz it gives you the
  * singleton by default if context is from Spring framework</b>
  *
  * @author Chang Su
- * @version 2.3
+ * @version 2.4
  * @see ApplicationContext
  * @see org.springframework.context.ApplicationContextAware
  * @since 4/3/2022
@@ -40,8 +39,6 @@ public class GaussBeanFactory implements ApplicationContextAware {
     private static final Log logger = LogFactory.getLog(GaussCacheAspect.class);
 
     private static ApplicationContext context;
-
-    private static final List<Class<?>> CLONEABLE_CLASS = new ArrayList<>();
 
     private static final Map<Class<?>, Object> OBJECT_CACHE = Maps.newConcurrentMap();
 
@@ -76,6 +73,7 @@ public class GaussBeanFactory implements ApplicationContextAware {
      * @param name name of the object
      * @return an instance of the object
      */
+    @SuppressWarnings("unused")
     public static Object getBean(String name) {
         if (!isReady()) {
             logger.error("GaussBeanFactory is not ready yet...");
@@ -91,6 +89,9 @@ public class GaussBeanFactory implements ApplicationContextAware {
         return obj;
     }
 
+    public static boolean containsBean(String beanName) {
+        return context.containsBean(beanName) || context.containsBeanDefinition(beanName);
+    }
     static <T> T getObject(Class<T> clazz) {
         return context.getBean(clazz);
     }
@@ -121,7 +122,7 @@ public class GaussBeanFactory implements ApplicationContextAware {
         }
         Constructor<T>[] ctors = (Constructor<T>[]) clazz.getDeclaredConstructors();
         Class<?>[] argTypes = (Class<?>[]) Arrays.stream(args)
-                .map(Object::getClass).toArray();
+                .map(Object::getClass).toArray(Class[]::new);
         Optional<Constructor<T>> properCtor = Arrays.stream(ctors)
                 .filter(c -> filterConstructors(c.getParameterTypes(), argTypes))
                 .findAny();
@@ -177,16 +178,6 @@ public class GaussBeanFactory implements ApplicationContextAware {
            logger.error(e.getMessage());
         }
         return null;
-    }
-
-    static void addCloneableClazz(Class<?> clazz) {
-        if (CLONEABLE_CLASS.contains(clazz))
-            return;
-        CLONEABLE_CLASS.add(clazz);
-    }
-
-    static Class<?>[] getCloneableClass() {
-        return CLONEABLE_CLASS.toArray(new Class<?>[0]);
     }
 
     public static boolean isReady() {

@@ -26,7 +26,7 @@ interface Targeter {
     <T> T target(Target<T> target);
 
     @SuppressWarnings("unchecked")
-    default <T> T getProxyInstance(Target<T> target, InvocationHandler handler, Class<?>... others) {
+    static <T> T getProxyInstance(Target<T> target, InvocationHandler handler, Class<?>... others) {
         Class<?>[] types = new Class[others.length + 1];
         if (!ObjectUtils.isEmpty(others)) {
             System.arraycopy(others, 0, types, 0, others.length);
@@ -50,7 +50,7 @@ interface Targeter {
 
         private <T> T newInstance(Target<T> target) {
             Map<String, GaussConversion<Object,Object>> fieldMetadata = readConversionMetaData(target.type());
-            InvocationHandler handler = InvocationHandlerFactory.create(target, fieldMetadata);
+            InvocationHandler handler = InvocationHandlerFactory.createDispatcherHandler(target, fieldMetadata);
             return getProxyInstance(target, handler, GaussConversionFactory.GaussCustomConvertor.class);
         }
 
@@ -81,7 +81,7 @@ interface Targeter {
         }
 
         private <T> T getCustomConvertorProxy(Target<T> target) {
-            InvocationHandler handler = InvocationHandlerFactory.create(target);
+            InvocationHandler handler = InvocationHandlerFactory.createConversionHandler(target);
             return getProxyInstance(target, handler);
         }
     }

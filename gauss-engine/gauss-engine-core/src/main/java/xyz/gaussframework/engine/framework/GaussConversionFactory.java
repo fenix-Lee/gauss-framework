@@ -18,10 +18,10 @@ class GaussConversionFactory implements FactoryBean<Object> {
     @SuppressWarnings("unchecked")
     <T> T getTarget() {
         return (T) new Targeter.GaussTargeter()
-                .target(new Target.GaussCodedTarget<>(type, name));
+                .target(new Target.GaussTarget<>(type, name));
     }
 
-    interface GaussCustomConvertor {
+    public interface GaussCustomConvertor {
 
         default <S,D> Converter<S, D> getConvertor(String tag) {
             throw new GaussConvertorException("tag: " + tag + " must be casted by handler...");
